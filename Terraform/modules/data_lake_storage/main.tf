@@ -17,7 +17,7 @@ resource "azurerm_storage_data_lake_gen2_filesystem" "data_lake_filesystem" {
 resource "azurerm_storage_data_lake_gen2_path" "donnees_meteo" {
   for_each = toset(var.folders_names_donnees_meteo)
 
-  path               = "${var.donnees_meteo_filesystems}/${each.value}"
+  path               = "${each.value}"
   filesystem_name    = azurerm_storage_data_lake_gen2_filesystem.data_lake_filesystem[var.donnees_meteo_filesystems].name
   storage_account_id = azurerm_storage_account.data_lake.id
   resource           = "directory"
