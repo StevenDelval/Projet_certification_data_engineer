@@ -28,3 +28,18 @@ variable "folders_names_donnees_meteo" {
   type        = list(string)
   description = "A list of folder names to be created within the weather data filesystem in the Data Lake."
 }
+
+variable "data_factory_name" {
+  type        = string
+  description = "The name of the Azure data factory resource."
+}
+
+variable "service_plan_weather_func_name" {
+  type        = string
+  description = "The name of the Azure App Service plan used to host the Function App."
+}
+
+variable "weather_function_name" {
+  type        = string
+  description = "The name of the Azure Function that will be deployed."
+}
