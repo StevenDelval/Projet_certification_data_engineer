@@ -16,6 +16,12 @@ resource "azurerm_linux_function_app" "weather_function" {
   service_plan_id            = azurerm_service_plan.service_plan_weather_func.id
 
 
+  app_settings = {
+    STORAGE_ACCOUNT_NAME    = var.data_lake_name
+    STORAGE_ACCOUNT_KEY     = var.data_lake_key
+    FILE_SYSTEM_NAME        = var.SECRET_FILE_SYSTEM_NAME
+    DIRECTORY_NAME          =var.SECRET_DIRECTORY_NAME
+  }
 
   site_config {
     application_stack {
@@ -23,6 +29,7 @@ resource "azurerm_linux_function_app" "weather_function" {
     }
     application_insights_connection_string = var.application_insights_connection_string
     application_insights_key = var.application_insights_key
+    
   }
   
 }

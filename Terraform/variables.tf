@@ -43,3 +43,15 @@ variable "weather_function_name" {
   type        = string
   description = "The name of the Azure Function that will be deployed."
 }
+
+variable "SECRET_FILE_SYSTEM_NAME" {
+  type        = string
+  description = "The name of the file system within the Azure Data Lake Storage."
+  sensitive   = true
+}
+
+variable "SECRET_DIRECTORY_NAME" {
+  type        = string
+  description = "The name of the directory within the file system of the Azure Data Lake Storage."
+  sensitive   = true
+}

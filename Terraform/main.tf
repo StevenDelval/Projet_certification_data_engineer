@@ -61,5 +61,9 @@ module "azure_functions"{
     weather_function_name = var.weather_function_name
     application_insights_connection_string = azurerm_application_insights.app_insights.connection_string
     application_insights_key = azurerm_application_insights.app_insights.instrumentation_key
+    data_lake_name = var.data_lake_name
+    data_lake_key = module.data_lake.data_lake_key
+    SECRET_DIRECTORY_NAME = var.SECRET_DIRECTORY_NAME
+    SECRET_FILE_SYSTEM_NAME = var.SECRET_FILE_SYSTEM_NAME
 
 }
