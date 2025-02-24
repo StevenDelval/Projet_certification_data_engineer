@@ -79,22 +79,22 @@ def collecte_csv_weather_data(req: func.HttpRequest) -> func.HttpResponse:
                         writer = pq.ParquetWriter(output, table.schema)
                     # Écriture de la table dans le fichier Parquet
                     writer.write_table(table)
-                    
-        logging.info("Finish read the CSV file .")
 
-        # Create a client instance for Azure Data Lake
-        logging.info("Create a client instance for Azure Data Lake.")
-        service_client = get_service_client(STORAGE_ACCOUNT_NAME, STORAGE_ACCOUNT_KEY)
-        file_system_client = service_client.get_file_system_client(file_system=FILE_SYSTEM_NAME)
-        directory_client = file_system_client.get_directory_client(DIRECTORY_NAME)
-        file_client = directory_client.get_file_client(file_name)
+            logging.info("Finish read the CSV file .")
 
-        # Upload the Parquet file to Data Lake
-        logging.info("Upload the Parquet file to Data Lake.")
-        if writer:
-                writer.close()
-                output.seek(0) # Rembobinage du buffer pour la lecture
-                file_client.upload_data(output, overwrite=True)
+            # Create a client instance for Azure Data Lake
+            logging.info("Create a client instance for Azure Data Lake.")
+            service_client = get_service_client(STORAGE_ACCOUNT_NAME, STORAGE_ACCOUNT_KEY)
+            file_system_client = service_client.get_file_system_client(file_system=FILE_SYSTEM_NAME)
+            directory_client = file_system_client.get_directory_client(DIRECTORY_NAME)
+            file_client = directory_client.get_file_client(file_name)
+
+            # Upload the Parquet file to Data Lake
+            logging.info("Upload the Parquet file to Data Lake.")
+            if writer:
+                    writer.close()
+                    output.seek(0) # Rembobinage du buffer pour la lecture
+                    file_client.upload_data(output, overwrite=True)
 
         return func.HttpResponse(
             json.dumps({"message": f"CSV successfully converted to Parquet and stored in Data Lake as {file_name}"}),
