@@ -2,6 +2,8 @@ import azure.functions as func
 import logging
 from dotenv import load_dotenv
 import pandas as pd
+import pyarrow as pa
+import pyarrow.parquet as pq
 import json
 import os
 from azure.storage.filedatalake import DataLakeServiceClient
@@ -59,10 +61,25 @@ def collecte_csv_weather_data(req: func.HttpRequest) -> func.HttpResponse:
         )
 
     try:
-        
+        chunksize = 100000
         # Read the CSV file directly from the URL into a pandas DataFrame
         logging.info("Start read the CSV file.")
-        df = pd.read_csv(url_csv_file, compression="gzip", sep=";")
+        with BytesIO() as output:
+            writer = None # Initialisation du writer Parquet
+            
+            for chunk in pd.read_csv(url_csv_file, compression="gzip", parse_dates=["DATE"], chunksize=chunksize, sep=";"):
+                    # Conversion du chunk Pandas en table PyArrow
+                    mask = (
+                        (chunk["LAMBX"] >= 5300) & (chunk["LAMBX"] <= 7500) & (chunk["LAMBY"] >= 24000) 
+                    )
+                    table = pa.Table.from_pandas(chunk[mask])
+
+                    # Création du writer Parquet lors du premier chunk
+                    if writer is None:
+                        writer = pq.ParquetWriter(output, table.schema)
+                    # Écriture de la table dans le fichier Parquet
+                    writer.write_table(table)
+                    
         logging.info("Finish read the CSV file .")
 
         # Create a client instance for Azure Data Lake
@@ -74,7 +91,10 @@ def collecte_csv_weather_data(req: func.HttpRequest) -> func.HttpResponse:
 
         # Upload the Parquet file to Data Lake
         logging.info("Upload the Parquet file to Data Lake.")
-        file_client.upload_data(df.to_parquet(index=False), overwrite=True)
+        if writer:
+                writer.close()
+                output.seek(0) # Rembobinage du buffer pour la lecture
+                file_client.upload_data(output, overwrite=True)
 
         return func.HttpResponse(
             json.dumps({"message": f"CSV successfully converted to Parquet and stored in Data Lake as {file_name}"}),
