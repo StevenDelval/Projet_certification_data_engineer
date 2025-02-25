@@ -28,6 +28,12 @@ variable "function_storage_primary_access_key" {
   type        = string
 }
 
+variable "azurerm_storage_account_connection_string" {
+  description = "Chaîne de connexion complète du compte de stockage Azure, utilisée pour générer des SAS tokens et interagir avec les services de stockage."
+  type        = string
+  sensitive   = true
+}
+
 variable "function_source_dir" {
   description = "Répertoire contenant le code source de la fonction"
   type        = string

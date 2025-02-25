@@ -24,8 +24,3 @@ resource "azurerm_storage_data_lake_gen2_path" "donnees_meteo" {
   storage_account_id = azurerm_storage_account.data_lake.id
   resource           = "directory"
 }
-
-output "data_lake_key" {
-  value     = azurerm_storage_account.data_lake.primary_access_key
-  sensitive = true
-}
