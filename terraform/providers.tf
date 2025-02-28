@@ -13,3 +13,6 @@ provider "azurerm" {
 }
 provider "archive" {
 }
+provider "null" {
+  
+}
