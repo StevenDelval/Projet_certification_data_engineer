@@ -21,14 +21,15 @@ FILE_SYSTEM_NAME = os.getenv("FILE_SYSTEM_NAME")
 DIRECTORY_NAME = os.getenv("DIRECTORY_NAME")
 
 def get_service_client(account_name: str, account_key: str) -> DataLakeServiceClient:
-    """Crée une instance de DataLakeServiceClient.
+    """
+    Crée une instance du client Azure Data Lake Service.
     
     Args:
         account_name (str): Nom du compte de stockage Azure.
         account_key (str): Clé d'accès au compte de stockage.
     
     Returns:
-        DataLakeServiceClient: Client pour interagir avec le service Azure Data Lake.
+        DataLakeServiceClient: Objet client permettant d'interagir avec Azure Data Lake.
     """
     return DataLakeServiceClient(
         account_url=f"https://{account_name}.dfs.core.windows.net",
@@ -40,6 +41,15 @@ app = func.FunctionApp()
 
 @app.route(route="collecte_api_hubeau_data", auth_level=func.AuthLevel.Function, methods=["POST"])
 def collecte_api_hubeau_data(req: func.HttpRequest) -> func.HttpResponse:
+    """
+    Fonction Azure qui récupère des données de l'API Hubeau et les stocke dans Azure Data Lake.
+    
+    Args:
+        req (func.HttpRequest): Requête HTTP contenant le paramètre 'code_bss'.
+    
+    Returns:
+        func.HttpResponse: Réponse HTTP indiquant le succès ou l'échec de l'opération.
+    """
     logging.info('Python HTTP trigger function processed a request.')
     
     api_url = "https://hubeau.eaufrance.fr/api/v1/niveaux_nappes/chroniques"
@@ -64,6 +74,7 @@ def collecte_api_hubeau_data(req: func.HttpRequest) -> func.HttpResponse:
                 mimetype="application/json",
                 status_code=400
             )
+        
         all_data = [] # Liste pour stocker toutes les données récupérées
         page = 1 # Numéro de page initial
 
@@ -81,9 +92,8 @@ def collecte_api_hubeau_data(req: func.HttpRequest) -> func.HttpResponse:
                 for item in data['data']:
                     # Nettoyage et conversion des données pour chaque élément
                     item['date_mesure'] = datetime.strptime(item['date_mesure'], '%Y-%m-%d').date()
-                    item['niveau_nappe_eau'] = pd.to_numeric(item['niveau_nappe_eau'], errors='coerce') # Conversion en numérique, gère les erreurs
-                    item['profondeur_nappe'] = - pd.to_numeric(item['profondeur_nappe'], errors='coerce') # Conversion en numérique et inversion du signe
-
+                    item['niveau_nappe_eau'] = pd.to_numeric(item['niveau_nappe_eau'], errors='coerce') # Conversion en numérique
+                    item['profondeur_nappe'] = - pd.to_numeric(item['profondeur_nappe'], errors='coerce') # Conversion et inversion du signe
 
                 all_data.extend(data['data']) # Ajout des données de la page à la liste complète
                 page += 1 # Incrémentation du numéro de page
@@ -110,8 +120,6 @@ def collecte_api_hubeau_data(req: func.HttpRequest) -> func.HttpResponse:
         output.seek(0)
         file_client.upload_data(output, overwrite=True)
 
-            
-
     except Exception as e:
         logging.error(f"Erreur lors du traitement du fichier : {str(e)}")
         return func.HttpResponse(
@@ -119,4 +127,3 @@ def collecte_api_hubeau_data(req: func.HttpRequest) -> func.HttpResponse:
             mimetype="application/json",
             status_code=500
         )
-    
