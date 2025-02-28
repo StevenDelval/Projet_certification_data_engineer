@@ -9,40 +9,6 @@ resource "azurerm_service_plan" "service_plan_func" {
   sku_name            = "Y1"  
 }
 
-# Construction du ficher zip 
-data "archive_file" "function_code_blob" {
-  type        = "zip"
-  output_path = "/tmp/${var.function_name}.zip"
-  source_dir  = var.function_source_dir
-}
-
-# Téléversement du code ZIP dans le Storage Account
-resource "azurerm_storage_blob" "function_code_blob" {
-  name                   = "${var.function_name}.zip"
-  storage_account_name   = var.function_storage
-  storage_container_name = "function-code"
-  type                   = "Block"
-  source                 = data.archive_file.function_code_blob.output_path
-}
-
-data "azurerm_storage_account_blob_container_sas" "function_code_blob_sas" {
-  connection_string = var.azurerm_storage_account_connection_string
-  container_name    = "function-code"
-
-
-  permissions {
-    read   = true
-    write  = false
-    delete = false
-    list   = false
-    add    = false
-    create = false
-  }
-
-  start  = timestamp()
-  expiry = timeadd(timestamp(), "168h")  # Expiration dans 168 heure
-}
-
 # Définition de l'application fonction Azure (fonction en Python)
 resource "azurerm_linux_function_app" "function_app" {
   name                       = var.function_name
@@ -57,10 +23,8 @@ resource "azurerm_linux_function_app" "function_app" {
   storage_account_access_key = var.function_storage_primary_access_key
 
   # Paramètres de l'application (variables d'environnement)
-  app_settings = merge(var.app_settings,
-  {"SCM_DO_BUILD_DURING_DEPLOYMENT" = true,
-  "WEBSITE_RUN_FROM_PACKAGE" = "https://functionsprojetsd.blob.core.windows.net/function-code/${azurerm_storage_blob.function_code_blob.name}?${data.azurerm_storage_account_blob_container_sas.function_code_blob_sas.sas}"})
-
+  app_settings = var.app_settings
+  
   # Configuration spécifique du site pour l'application fonction
   site_config {
     application_stack {
@@ -70,7 +34,6 @@ resource "azurerm_linux_function_app" "function_app" {
     application_insights_connection_string = var.application_insights_connection_string
     application_insights_key = var.application_insights_key 
   }
-  depends_on = [ azurerm_storage_blob.function_code_blob ]
 }
 
 data "azurerm_monitor_diagnostic_categories" "function_app_diag_categories" {
@@ -99,4 +62,13 @@ resource "azurerm_monitor_diagnostic_setting" "function_app_diag" {
     category = "AllMetrics"
     enabled  = true
   }
+}
+
+resource "null_resource" "publish_function" {
+  provisioner "local-exec" {
+    working_dir = var.function_source_dir
+
+    command = "func azure functionapp publish ${var.function_name}"
+  }
+  depends_on = [ azurerm_linux_function_app.function_app ]
 }
