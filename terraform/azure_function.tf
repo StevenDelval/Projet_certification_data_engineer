@@ -32,10 +32,10 @@ module "azure_functions_weather_data"{
     application_insights_key = azurerm_application_insights.app_insights.instrumentation_key
     
     app_settings = {
-        "data_lake_name" = azurerm_storage_account.data_lake.name
-        "data_lake_key" = azurerm_storage_account.data_lake.primary_access_key
-        "SECRET_DIRECTORY_NAME" = "donnees-meteo"
-        "SECRET_FILE_SYSTEM_NAME" = "quotidien"
+        "STORAGE_ACCOUNT_NAME" = azurerm_storage_account.data_lake.name
+        "STORAGE_ACCOUNT_KEY" = azurerm_storage_account.data_lake.primary_access_key
+        "FILE_SYSTEM_NAME" = "donnees-meteo"
+        "DIRECTORY_NAME" = "quotidien"
         }
 
     log_analytics_workspace_id = azurerm_log_analytics_workspace.log_analytics.id
@@ -60,10 +60,10 @@ module "azure_functions_api" {
     application_insights_key = azurerm_application_insights.app_insights.instrumentation_key
     
     app_settings = {
-        "data_lake_name" = azurerm_storage_account.data_lake.name
-        "data_lake_key" = azurerm_storage_account.data_lake.primary_access_key
-        "SECRET_DIRECTORY_NAME" = "donnees-piezometre"
-        "SECRET_FILE_SYSTEM_NAME" = "quotidien"
+        "STORAGE_ACCOUNT_NAME" = azurerm_storage_account.data_lake.name
+        "STORAGE_ACCOUNT_KEY" = azurerm_storage_account.data_lake.primary_access_key
+        "FILE_SYSTEM_NAME" = "donnees-piezometre"
+        "DIRECTORY_NAME" = "quotidien"
         }
 
     log_analytics_workspace_id = azurerm_log_analytics_workspace.log_analytics.id
