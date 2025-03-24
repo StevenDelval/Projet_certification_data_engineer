@@ -24,3 +24,11 @@ resource "azurerm_storage_data_lake_gen2_path" "donnees_meteo" {
   storage_account_id = azurerm_storage_account.data_lake.id
   resource           = "directory"
 }
+
+resource "azurerm_storage_data_lake_gen2_path" "donnees_piezometre" {
+  path               = "quotidien"
+  
+  filesystem_name    = azurerm_storage_data_lake_gen2_filesystem.data_lake_filesystem["donnees-piezometre"].name
+  storage_account_id = azurerm_storage_account.data_lake.id
+  resource           = "directory"
+}
