@@ -39,7 +39,7 @@ def get_service_client(account_name: str, account_key: str) -> DataLakeServiceCl
 # Création de l'application Azure Function
 app = func.FunctionApp()
 
-@app.route(route="collecte_api_hubeau_data", auth_level=func.AuthLevel.Function, methods=["POST"])
+@app.route(route="collecte_api_hubeau_data", auth_level=func.AuthLevel.FUNCTION, methods=["POST"])
 def collecte_api_hubeau_data(req: func.HttpRequest) -> func.HttpResponse:
     """
     Fonction Azure qui récupère des données de l'API Hubeau et les stocke dans Azure Data Lake.
