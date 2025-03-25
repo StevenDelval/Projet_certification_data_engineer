@@ -68,17 +68,23 @@ def collecte_csv_weather_data(req: func.HttpRequest) -> func.HttpResponse:
         with BytesIO() as output:
             writer = None  # Initialisation de l'écrivain Parquet
             
-            for chunk in pd.read_csv(url_csv_file, compression="gzip", parse_dates=["DATE"], chunksize=chunksize, sep=";"):
-                # Filtrer les données selon les conditions spécifiques
-                mask = (chunk["LAMBX"] >= 5300) & (chunk["LAMBX"] <= 7500) & (chunk["LAMBY"] >= 24000)
-                table = pa.Table.from_pandas(chunk[mask])
+        for chunk in pd.read_csv(url_csv_file, compression="gzip", parse_dates=["DATE"], chunksize=chunksize, sep=";"):
+            # Filtrer les données selon les conditions spécifiques
+            mask = (chunk["LAMBX"] >= 5300) & (chunk["LAMBX"] <= 7500) & (chunk["LAMBY"] >= 24000)
+            
+            # Appliquer le filtre AVANT de réinitialiser l'index
+            chunk_filtered = chunk[mask].reset_index(drop=True)
 
-                # Création du writer Parquet si c'est le premier chunk
-                if writer is None:
-                    writer = pq.ParquetWriter(output, table.schema)
+            # Convertir en format Parquet
+            table = pa.Table.from_pandas(chunk_filtered)
 
-                # Écriture des données filtrées dans Parquet
-                writer.write_table(table)
+            # Création du writer Parquet si c'est le premier chunk
+            if writer is None:
+                writer = pq.ParquetWriter(output, table.schema)
+
+            # Écriture des données filtrées dans Parquet
+            writer.write_table(table)
+
 
             logging.info("Lecture du fichier CSV terminée.")
 
