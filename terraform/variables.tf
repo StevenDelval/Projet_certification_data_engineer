@@ -29,3 +29,14 @@ variable "donnees_meteo_filesystems" {
   description = "Index du filesystem à utiliser pour les dossiers de données météo."
   type        = string
 }
+
+variable "admin_login" {
+  description = "Nom d'utilisateur de l'administrateur de la base de données SQL Azure."
+  type        = string
+}
+
+variable "admin_password" {
+  description = "Mot de passe de l'administrateur de la base de données SQL Azure. Assurez-vous qu'il respecte les exigences de sécurité."
+  type        = string
+  sensitive   = true
+}
