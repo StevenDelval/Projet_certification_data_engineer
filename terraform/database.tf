@@ -30,3 +30,12 @@ resource "null_resource" "initialize_db" {
   }
   depends_on = [azurerm_mssql_database.db]
 }
+
+resource "null_resource" "procedure" {
+  provisioner "local-exec" {
+    command = <<EOT
+      sqlcmd -S my-sqlserver-sd.database.windows.net -U ${var.admin_login} -P "${var.admin_password}" -d databaseControlTables -i ../base_de_donnees/ct_storage_procedure.sql
+    EOT
+  }
+  depends_on = [azurerm_mssql_database.db]
+}
