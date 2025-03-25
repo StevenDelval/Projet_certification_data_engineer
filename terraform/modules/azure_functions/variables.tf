@@ -61,3 +61,8 @@ variable "log_analytics_workspace_id" {
   description = "ID du workspace Log Analytics pour stocker les logs de diagnostic"
   type        = string
 }
+
+variable "endpoint" {
+  description = "Le nom de la fonction dans l'application fonction Azure. Ce nom est utilisé pour récupérer la clé de la fonction spécifique via la commande Azure CLI."
+  type        = string
+}
