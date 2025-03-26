@@ -19,6 +19,7 @@ module "azure_functions_weather_data"{
 
     service_plan_func_name = "sp-weather-func-sd"
     function_name = "get-weather-data-projet-sd"
+    endpoint = "collecte_csv_weather_data"
     
     resource_group_location = azurerm_resource_group.resource_group.location
     resource_group_name = azurerm_resource_group.resource_group.name
@@ -47,6 +48,7 @@ module "azure_functions_api" {
 
     service_plan_func_name = "sp-api-hubeau-func-sd"
     function_name = "get-hubeau-api-data-projet-sd"
+    endpoint = "collecte_api_hubeau_data"
     
     resource_group_location = azurerm_resource_group.resource_group.location
     resource_group_name = azurerm_resource_group.resource_group.name
