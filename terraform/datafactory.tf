@@ -3,3 +3,128 @@ resource "azurerm_data_factory" "data_factory" {
   location            = azurerm_resource_group.resource_group.location
   resource_group_name = azurerm_resource_group.resource_group.name
 }
+
+resource "azurerm_data_factory_linked_service_sql_server" "csv_database" {
+  name                 = "Csv_database_tf"
+  data_factory_id = azurerm_data_factory.data_factory.id
+  connection_string    = "Server=tcp:my-sqlserver-sd.database.windows.net;Database=databaseControlTables;User ID=Sdelval;Password=${var.admin_password};"
+}
+
+resource "azurerm_data_factory_linked_service_azure_function" "csv_function" {
+  name                 = "Csv_function_tf"
+  
+  data_factory_id = azurerm_data_factory.data_factory.id
+  url     = "https://get-weather-data-projet-sd.azurewebsites.net"
+  key = module.azure_functions_weather_data.function_key
+}
+
+resource "azurerm_data_factory_dataset_sql_server_table" "table_control_for_csv" {
+  name                    = "Table_control_for_csv_tf"
+  data_factory_id = azurerm_data_factory.data_factory.id
+  linked_service_name     = azurerm_data_factory_linked_service_sql_server.csv_database.name
+  table_name              = "CsvControlTable"
+}
+  
+
+
+resource "azurerm_data_factory_pipeline" "pipeline1" {
+  name                    = "pipeline2_tf"
+  data_factory_id = azurerm_data_factory.data_factory.id
+  activities_json         = jsonencode([
+    {
+      name = "get_info_csv"
+      type = "Lookup"
+      dependsOn = []
+      policy = {
+        timeout                  = "0.12:00:00"
+        retry                    = 0
+        retryIntervalInSeconds   = 30
+        secureOutput             = false
+        secureInput              = false
+      }
+      typeProperties = {
+        source = {
+          type            = "AzureSqlSource"
+          sqlReaderQuery  = "SELECT nom_du_fichier, url_du_fichier FROM CsvControlTable"
+          queryTimeout    = "02:00:00"
+          partitionOption = "None"
+        }
+        dataset = {
+          referenceName = azurerm_data_factory_dataset_sql_server_table.table_control_for_csv.name
+          type          = "DatasetReference"
+        }
+        firstRowOnly = false
+      }
+    },
+    {
+      name = "ForEach1"
+      type = "ForEach"
+      dependsOn = [
+        {
+          activity = "get_info_csv"
+          dependencyConditions = [ "Succeeded" ]
+        }
+      ]
+      typeProperties = {
+        items = {
+          value = "@activity('get_info_csv').output.value"
+          type  = "Expression"
+        }
+        isSequential = false
+        batchCount   = 1
+        activities = [
+          {
+            name = "Azure Function1"
+            type = "AzureFunctionActivity"
+            dependsOn = []
+            policy = {
+              timeout                  = "0.12:00:00"
+              retry                    = 0
+              retryIntervalInSeconds   = 30
+              secureOutput             = false
+              secureInput              = false
+            }
+            typeProperties = {
+              functionName = "collecte_csv_weather_data"
+              body = {
+                value = "{\n    \"file_name\":\"@{item().nom_du_fichier}\",\n    \"url_csv_file\":\"@{item().url_du_fichier}\"\n    }"
+                type  = "Expression"
+              }
+              method = "POST"
+            }
+            linkedServiceName = {
+              referenceName = azurerm_data_factory_linked_service_azure_function.csv_function.name
+              type          = "LinkedServiceReference"
+            }
+          }
+        ]
+      }
+    },
+    {
+      name = "DeleteUselessRow"
+      type = "SqlServerStoredProcedure"
+      dependsOn = [
+        {
+          activity = "ForEach1"
+          dependencyConditions = [ "Succeeded" ]
+        }
+      ]
+      policy = {
+        timeout                  = "0.12:00:00"
+        retry                    = 0
+        retryIntervalInSeconds   = 30
+        secureOutput             = false
+        secureInput              = false
+      }
+      typeProperties = {
+        storedProcedureName = "[dbo].[DeleteUselessRow]"
+      }
+      linkedServiceName = {
+        referenceName = azurerm_data_factory_linked_service_sql_server.csv_database.name
+        type          = "LinkedServiceReference"
+      }
+    }
+  ])
+}
+
+    
