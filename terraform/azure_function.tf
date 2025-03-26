@@ -64,8 +64,8 @@ module "azure_functions_api" {
     app_settings = {
         "STORAGE_ACCOUNT_NAME" = azurerm_storage_account.data_lake.name
         "STORAGE_ACCOUNT_KEY" = azurerm_storage_account.data_lake.primary_access_key
-        "DIRECTORY_NAME" = "donnees-piezometre"
-        "FILE_SYSTEM_NAME" = "quotidien"
+        "FILE_SYSTEM_NAME" = "donnees-piezometre"
+        "DIRECTORY_NAME" = "quotidien"
         }
 
     log_analytics_workspace_id = azurerm_log_analytics_workspace.log_analytics.id
