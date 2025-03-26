@@ -27,8 +27,8 @@ resource "azurerm_data_factory_dataset_sql_server_table" "table_control_for_csv"
   
 
 
-resource "azurerm_data_factory_pipeline" "pipeline1" {
-  name                    = "pipeline2_tf"
+resource "azurerm_data_factory_pipeline" "pipeline_get_csv" {
+  name                    = "pipeline_get_csv"
   data_factory_id = azurerm_data_factory.data_factory.id
   activities_json         = jsonencode([
     {
@@ -74,7 +74,7 @@ resource "azurerm_data_factory_pipeline" "pipeline1" {
         batchCount   = 1
         activities = [
           {
-            name = "Azure Function1"
+            name = "Azure Function Get csv"
             type = "AzureFunctionActivity"
             dependsOn = []
             policy = {
@@ -128,3 +128,20 @@ resource "azurerm_data_factory_pipeline" "pipeline1" {
 }
 
     
+resource "azurerm_data_factory_trigger_schedule" "trigger_get_csv" {
+  name            = "trigger_get_csv"
+  data_factory_id = azurerm_data_factory.data_factory.id
+
+  pipeline {
+    name = azurerm_data_factory_pipeline.pipeline_get_csv.name
+  }
+  frequency = "Month"
+  interval  = 1
+  start_time = "2025-04-08T10:00:00Z" # Use UTC time to avoid timezone issues
+  time_zone  = "Romance Standard Time"
+  schedule {
+      minutes   = [0]
+      hours     = [10]
+      days_of_month = [8]
+    }
+}
