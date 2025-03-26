@@ -114,11 +114,17 @@ def collecte_api_hubeau_data(req: func.HttpRequest) -> func.HttpResponse:
 
         logging.info("Téléversement du fichier Parquet vers Azure Data Lake.")
         # Écriture des données au format Parquet dans Azure Data Lake
-        table = pa.Table.from_pylist(all_data)
-        output = BytesIO()
-        pq.write_table(table, output)
-        output.seek(0)
-        file_client.upload_data(output, overwrite=True)
+        with BytesIO() as output:
+            table = pa.Table.from_pylist(all_data)
+            pq.write_table(table, output)
+            output.seek(0)
+            file_client.upload_data(output, overwrite=True)
+        
+        return func.HttpResponse(
+            json.dumps({"message": f"Données stockées sous {code_bss.replace('/','-')} dans Data Lake."}),
+            mimetype="application/json",
+            status_code=200
+        )
 
     except Exception as e:
         logging.error(f"Erreur lors du traitement du fichier : {str(e)}")
