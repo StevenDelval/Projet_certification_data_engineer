@@ -4,7 +4,7 @@ resource "azurerm_mssql_server" "sql_server" {
   location                     = azurerm_resource_group.resource_group.location
   version                      = "12.0"
   administrator_login          = var.admin_login
-  administrator_login_password = var.admin_password
+  administrator_login_password = var.admin_password 
 }
 
 resource "azurerm_mssql_database" "db" {
@@ -13,6 +13,7 @@ resource "azurerm_mssql_database" "db" {
   sku_name       = "Free"
   zone_redundant = false
   storage_account_type = "Local"
+  geo_backup_enabled = false
 }
 
 resource "azurerm_mssql_firewall_rule" "allow_all" {
