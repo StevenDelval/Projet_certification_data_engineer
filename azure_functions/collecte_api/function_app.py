@@ -110,7 +110,7 @@ def collecte_api_hubeau_data(req: func.HttpRequest) -> func.HttpResponse:
         service_client = get_service_client(STORAGE_ACCOUNT_NAME, STORAGE_ACCOUNT_KEY)
         file_system_client = service_client.get_file_system_client(file_system=FILE_SYSTEM_NAME)
         directory_client = file_system_client.get_directory_client(DIRECTORY_NAME)
-        file_client = directory_client.get_file_client(f"{code_bss}.parquet")
+        file_client = directory_client.get_file_client(f"{code_bss.replace('/','-')}.parquet")
 
         logging.info("Téléversement du fichier Parquet vers Azure Data Lake.")
         # Écriture des données au format Parquet dans Azure Data Lake
