@@ -84,3 +84,7 @@ output "function_key" {
   value = data.azurerm_function_app_host_keys.app_key.default_function_key
   sensitive = true
 }
+
+output "endpoint" {
+  value = var.endpoint
+}
