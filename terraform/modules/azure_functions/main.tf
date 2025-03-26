@@ -74,17 +74,13 @@ resource "null_resource" "publish_function" {
 }
 
 
-resource "null_resource" "get_function_key" {
-  provisioner "local-exec" {
-    command = "az functionapp function keys list --name ${azurerm_linux_function_app.function_app.name} --resource-group ${var.resource_group_name} --function-name ${var.endpoint} --query 'default' -o tsv"
-  }
-
-  depends_on = [
-    null_resource.publish_function
-  ]
+data "azurerm_function_app_host_keys" "app_key" {
+  name                = var.function_name
+  resource_group_name = var.resource_group_name
+  depends_on = [ azurerm_linux_function_app.function_app, null_resource.publish_function]
 }
 
 output "function_key" {
-  value = chomp(null_resource.get_function_key.*.triggers[0].stdout)
+  value = data.azurerm_function_app_host_keys.app_key.default_function_key
   sensitive = true
 }
