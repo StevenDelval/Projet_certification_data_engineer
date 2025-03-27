@@ -62,7 +62,7 @@ def collecte_api_hubeau_data(req: func.HttpRequest) -> func.HttpResponse:
 
         params = {
             "code_bss": code_bss,
-            "date_debut_mesure": "2010-01-01",
+            "date_debut_mesure": "2000-01-01",
             "date_fin_mesure": date_fin_mesure,
             "size": 1000 # Nombre maximal de résultats par page
         }
