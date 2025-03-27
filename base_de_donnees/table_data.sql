@@ -1,7 +1,7 @@
 CREATE TABLE TableMeteoQuotidien (
   LAMBX INT,
   LAMBY INT,
-  DATE DATE,
+  DATE INT,
   PRENEI_Q FLOAT,
   PRELIQ_Q FLOAT,
   T_Q FLOAT,
@@ -39,7 +39,7 @@ CREATE TABLE TablePiezoInfo (
 CREATE TABLE TablePiezoQuotidien (
   code_bss NVARCHAR(100) REFERENCES TablePiezoInfo(code_bss),
   urn_bss NVARCHAR(255),
-  date_mesure DATE,
+  date_mesure INT,
   niveau_nappe_eau FLOAT,
   mode_obtention NVARCHAR(100),
   statut NVARCHAR(100),
