@@ -26,7 +26,7 @@ resource "azurerm_mssql_firewall_rule" "allow_all" {
 resource "null_resource" "initialize_db" {
   provisioner "local-exec" {
     command = <<EOT
-      sqlcmd -S my-sqlserver-sd.database.windows.net -U ${var.admin_login} -P "${var.admin_password}" -d databaseControlTables -i ../base_de_donnees/control_tables.sql
+      sqlcmd -S my-sqlserver-sd.database.windows.net -U ${var.admin_login} -P "${var.admin_password}" -d ${azurerm_mssql_database.db_control_table.name} -i ../base_de_donnees/control_tables.sql
     EOT
   }
   depends_on = [azurerm_mssql_database.db_control_table]
@@ -35,7 +35,7 @@ resource "null_resource" "initialize_db" {
 resource "null_resource" "procedure" {
   provisioner "local-exec" {
     command = <<EOT
-      sqlcmd -S my-sqlserver-sd.database.windows.net -U ${var.admin_login} -P "${var.admin_password}" -d databaseControlTables -i ../base_de_donnees/ct_storage_procedure.sql
+      sqlcmd -S my-sqlserver-sd.database.windows.net -U ${var.admin_login} -P "${var.admin_password}" -d ${azurerm_mssql_database.db_control_table.name} -i ../base_de_donnees/ct_storage_procedure.sql
     EOT
   }
   depends_on = [azurerm_mssql_database.db_control_table]
@@ -47,4 +47,13 @@ resource "azurerm_mssql_database" "db_data" {
   sku_name       = "Basic"
   zone_redundant = false
   storage_account_type = "Local"
+}
+
+resource "null_resource" "create_table" {
+  provisioner "local-exec" {
+    command = <<EOT
+      sqlcmd -S my-sqlserver-sd.database.windows.net -U ${var.admin_login} -P "${var.admin_password}" -d ${azurerm_mssql_database.db_data.name} -i ../base_de_donnees/table_data.sql
+    EOT
+  }
+  depends_on = [azurerm_mssql_database.db_data]
 }
