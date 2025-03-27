@@ -91,7 +91,7 @@ def collecte_api_hubeau_data(req: func.HttpRequest) -> func.HttpResponse:
 
                 for item in data['data']:
                     # Nettoyage et conversion des données pour chaque élément
-                    item['date_mesure'] = datetime.strptime(item['date_mesure'], '%Y-%m-%d').date()
+                    item['date_mesure'] = pd.Timestamp(pd.to_datetime(item['date_mesure'], format='%Y-%m-%d')).timestamp()
                     item['niveau_nappe_eau'] = pd.to_numeric(item['niveau_nappe_eau'], errors='coerce') # Conversion en numérique
                     item['profondeur_nappe'] = pd.to_numeric(item['profondeur_nappe'], errors='coerce') # Conversion et inversion du signe
 
@@ -104,6 +104,13 @@ def collecte_api_hubeau_data(req: func.HttpRequest) -> func.HttpResponse:
                     mimetype="application/json",
                     status_code=500
                 )
+        if not all_data:
+            # Return 200 with a "no data" message if all_data is empty
+            return func.HttpResponse(
+                json.dumps({"message": "No data available."}),
+                mimetype="application/json",
+                status_code=200
+            )
         
         # Connexion à Azure Data Lake et envoi du fichier
         logging.info("Connexion à Azure Data Lake.")
@@ -115,7 +122,9 @@ def collecte_api_hubeau_data(req: func.HttpRequest) -> func.HttpResponse:
         logging.info("Téléversement du fichier Parquet vers Azure Data Lake.")
         # Écriture des données au format Parquet dans Azure Data Lake
         with BytesIO() as output:
-            table = pa.Table.from_pylist(all_data)
+            df = pd.DataFrame(all_data)
+            df.drop(columns="timestamp_mesure",inplace=True)
+            table = pa.Table.from_pandas(df)
             pq.write_table(table, output)
             output.seek(0)
             file_client.upload_data(output, overwrite=True)
