@@ -91,7 +91,7 @@ def collecte_api_hubeau_data(req: func.HttpRequest) -> func.HttpResponse:
 
                 for item in data['data']:
                     # Nettoyage et conversion des données pour chaque élément
-                    item['date_mesure'] = pd.Timestamp(pd.to_datetime(item['date_mesure'], format='%Y-%m-%d')).timestamp()
+                    item['date_mesure'] = pd.Timestamp(pd.to_datetime(item['date_mesure'], format='%Y-%m-%d')).strftime('%Y-%m-%d')
                     item['niveau_nappe_eau'] = pd.to_numeric(item['niveau_nappe_eau'], errors='coerce') # Conversion en numérique
                     item['profondeur_nappe'] = pd.to_numeric(item['profondeur_nappe'], errors='coerce') # Conversion et inversion du signe
 

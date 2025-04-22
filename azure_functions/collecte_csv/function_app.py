@@ -74,8 +74,13 @@ def collecte_csv_weather_data(req: func.HttpRequest) -> func.HttpResponse:
                 
                 # Appliquer le filtre AVANT de réinitialiser l'index
                 chunk_filtered = chunk[mask].reset_index(drop=True)
+
+                if chunk_filtered.empty:
+                    continue
+                
                 chunk_filtered["DATE"] = pd.to_datetime(chunk_filtered["DATE"], errors="coerce")
-                chunk_filtered["DATE"] = chunk_filtered["DATE"].astype("int64") // 10**9
+                chunk_filtered = chunk_filtered.dropna(subset=["DATE"])
+                chunk_filtered["DATE"] = chunk_filtered["DATE"].astype("str")
 
                 # Convertir en format Parquet
                 table = pa.Table.from_pandas(chunk_filtered)
