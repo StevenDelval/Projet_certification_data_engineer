@@ -1,67 +1,85 @@
-CREATE TABLE TableMeteoQuotidien (
-  LAMBX INT,
-  LAMBY INT,
-  DATE DATE,
-  PRENEI_Q FLOAT,
-  PRELIQ_Q FLOAT,
-  T_Q FLOAT,
-  FF_Q FLOAT,
-  Q_Q FLOAT,
-  DLI_Q FLOAT,
-  SSI_Q FLOAT,
-  HU_Q FLOAT,
-  EVAP_Q FLOAT,
-  ETP_Q FLOAT,
-  PE_Q FLOAT,
-  SWI_Q FLOAT,
-  DRAINC_Q FLOAT,
-  RUNC_Q FLOAT,
-  RESR_NEIGE_Q FLOAT,
-  RESR_NEIGE6_Q FLOAT,
-  HTEURNEIGE_Q FLOAT,
-  HTEURNEIGE6_Q FLOAT,
-  HTEURNEIGEX_Q FLOAT,
-  SNOW_FRAC_Q FLOAT,
-  ECOULEMENT_Q FLOAT,
-  WG_RACINE_Q FLOAT,
-  WGI_RACINE_Q FLOAT,
-  TINF_H_Q FLOAT,
-  TSUP_H_Q FLOAT
-  PRIMARY KEY (LAMBX, LAMBY, DATE) 
+-- Table des données météo quotidiennes
+CREATE TABLE "TableMeteoQuotidien" (
+  "DATE" DATE,
+  "LAMBX" INTEGER,
+  "LAMBY" INTEGER,
+  "PRENEI_Q" REAL,
+  "PRELIQ_Q" REAL,
+  "T_Q" REAL,
+  "FF_Q" REAL,
+  "Q_Q" REAL,
+  "DLI_Q" REAL,
+  "SSI_Q" REAL,
+  "HU_Q" REAL,
+  "EVAP_Q" REAL,
+  "ETP_Q" REAL,
+  "PE_Q" REAL,
+  "SWI_Q" REAL,
+  "DRAINC_Q" REAL,
+  "RUNC_Q" REAL,
+  "RESR_NEIGE_Q" REAL,
+  "RESR_NEIGE6_Q" REAL,
+  "HTEURNEIGE_Q" REAL,
+  "HTEURNEIGE6_Q" REAL,
+  "HTEURNEIGEX_Q" REAL,
+  "SNOW_FRAC_Q" REAL,
+  "ECOULEMENT_Q" REAL,
+  "WG_RACINE_Q" REAL,
+  "WGI_RACINE_Q" REAL,
+  "TINF_H_Q" REAL,
+  "TSUP_H_Q" REAL,
+  PRIMARY KEY ("DATE", "LAMBX", "LAMBY")
 );
 
-CREATE TABLE TablePiezoInfo (
-  code_bss NVARCHAR(100) PRIMARY KEY,
-  LAMBX INT,
-  LAMBY INT
+-- Table des points piézométriques
+CREATE TABLE "TablePiezoInfo" (
+  "code_bss" VARCHAR(100) PRIMARY KEY,
+  "LAMBX" INTEGER,
+  "LAMBY" INTEGER,
+  FOREIGN KEY ("LAMBX") REFERENCES "TableMeteoQuotidien" ("LAMBX"),
+  FOREIGN KEY ("LAMBY") REFERENCES "TableMeteoQuotidien" ("LAMBY")
 );
 
-CREATE TABLE TablePiezoQuotidien (
-  code_bss NVARCHAR(100) REFERENCES TablePiezoInfo(code_bss),
-  urn_bss NVARCHAR(255),
-  date_mesure DATE,
-  niveau_nappe_eau FLOAT,
-  mode_obtention NVARCHAR(100),
-  statut NVARCHAR(100),
-  qualification NVARCHAR(100),
-  code_continuite NVARCHAR(100),
-  nom_continuite NVARCHAR(100),
-  code_producteur NVARCHAR(100),
-  nom_producteur NVARCHAR(100),
-  code_nature_mesure NVARCHAR(100),
-  nom_nature_mesure NVARCHAR(100),
-  profondeur_nappe FLOAT,
-  PRIMARY KEY (code_bss, date_mesure)
+-- Table des types de mesure
+CREATE TABLE "Nature_mesure" (
+  "code_nature_mesure" VARCHAR(100) PRIMARY KEY,
+  "nom_nature_mesure" VARCHAR(255)
 );
 
-INSERT INTO TablePiezoInfo (code_bss, LAMBX, LAMBY)
-    VALUES
-    ('00263X0129/PZASA4', 2009, 2009),
-    ('00026X0040/P1', 2019, 2019),
-    ('00057X0005/F3', 1999, 1999),
-    ('00053X0004/F1', 2029, 2029);
+-- Table des types de continuité
+CREATE TABLE "Continuite" (
+  "code_continuite" INTEGER PRIMARY KEY,
+  "nom_continuite" VARCHAR(255)
+);
 
-    
+-- Table des producteurs
+CREATE TABLE "Producteur" (
+  "code_producteur" INTEGER PRIMARY KEY,
+  "nom_producteur" VARCHAR(255)
+);
 
+-- Table des mesures piézométriques quotidiennes
+CREATE TABLE "TablePiezoQuotidien" (
+  "code_bss" VARCHAR(100),
+  "date_mesure" DATE,
+  "code_nature_mesure" VARCHAR(100),
+  "code_continuite" INTEGER,
+  "code_producteur" INTEGER,
+  "qualification" VARCHAR(100),
+  "statut" VARCHAR(100),
+  "mode_obtention" VARCHAR(100),
+  "profondeur_nappe" REAL,
+  "niveau_nappe_eau" REAL,
+  PRIMARY KEY ("code_bss", "date_mesure"),
+  FOREIGN KEY ("code_bss") REFERENCES "TablePiezoInfo" ("code_bss"),
+  FOREIGN KEY ("code_nature_mesure") REFERENCES "Nature_mesure" ("code_nature_mesure"),
+  FOREIGN KEY ("code_continuite") REFERENCES "Continuite" ("code_continuite"),
+  FOREIGN KEY ("code_producteur") REFERENCES "Producteur" ("code_producteur")
+);
 
-
+-- Insertion d'exemples dans TablePiezoInfo
+INSERT INTO "TablePiezoInfo" ("code_bss", "LAMBX", "LAMBY")
+VALUES
+  ('00263X0129/PZASA4', 6280, 25850),
+  ('00026X0040/P1', 2019, 2019),
+  ('00053X0004/F1', 2029, 2029);
