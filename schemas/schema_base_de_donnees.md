@@ -60,8 +60,8 @@ erDiagram
 
     TablePiezoInfo {
         code_bss str pk
-        LAMBX int pk,fk
-        LAMBY int pk,fk
+        LAMBX int fk
+        LAMBY int fk
         urn_bss str
     }
 
