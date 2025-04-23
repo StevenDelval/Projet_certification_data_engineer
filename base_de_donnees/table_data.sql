@@ -34,6 +34,7 @@ CREATE TABLE "TableMeteoQuotidien" (
 -- Table des points piézométriques
 CREATE TABLE "TablePiezoInfo" (
   "code_bss" VARCHAR(100) PRIMARY KEY,
+  "urn_bss" VARCHAR(255) ,
   "LAMBX" INTEGER,
   "LAMBY" INTEGER,
   FOREIGN KEY ("LAMBX") REFERENCES "TableMeteoQuotidien" ("LAMBX"),
@@ -78,8 +79,8 @@ CREATE TABLE "TablePiezoQuotidien" (
 );
 
 -- Insertion d'exemples dans TablePiezoInfo
-INSERT INTO "TablePiezoInfo" ("code_bss", "LAMBX", "LAMBY")
+INSERT INTO "TablePiezoInfo" ("code_bss","urn_bss", "LAMBX", "LAMBY")
 VALUES
-  ('00263X0129/PZASA4', 6280, 25850),
-  ('00026X0040/P1', 2019, 2019),
-  ('00053X0004/F1', 2029, 2029);
+  ('00263X0129/PZASA4',"test", 6280, 25850),
+  ('00026X0040/P1',"test", 2019, 2019),
+  ('00053X0004/F1',"test", 2029, 2029);
