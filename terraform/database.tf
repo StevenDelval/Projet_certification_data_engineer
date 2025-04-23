@@ -35,7 +35,7 @@ resource "null_resource" "initialize_db" {
 resource "null_resource" "procedure" {
   provisioner "local-exec" {
     command = <<EOT
-      sqlcmd -S my-sqlserver-sd.database.windows.net -U ${var.admin_login} -P "${var.admin_password}" -d ${azurerm_mssql_database.db_control_table.name} -i ../base_de_donnees/ct_storage_procedure.sql
+      sqlcmd -S ${azurerm_mssql_server.sql_server.name}.database.windows.net -U ${var.admin_login} -P "${var.admin_password}" -d ${azurerm_mssql_database.db_control_table.name} -i ../base_de_donnees/ct_storage_procedure.sql
     EOT
   }
   depends_on = [azurerm_mssql_database.db_control_table]
@@ -52,7 +52,7 @@ resource "azurerm_mssql_database" "db_data" {
 resource "null_resource" "create_table" {
   provisioner "local-exec" {
     command = <<EOT
-      sqlcmd -S my-sqlserver-sd.database.windows.net -U ${var.admin_login} -P "${var.admin_password}" -d ${azurerm_mssql_database.db_data.name} -i ../base_de_donnees/table_data.sql
+      sqlcmd -S ${azurerm_mssql_server.sql_server.name}.database.windows.net -U ${var.admin_login} -P "${var.admin_password}" -d ${azurerm_mssql_database.db_data.name} -i ../base_de_donnees/table_data.sql
     EOT
   }
   depends_on = [azurerm_mssql_database.db_data]
