@@ -40,7 +40,7 @@ resource "azurerm_data_factory_dataset_sql_server_table" "table_control_for_api"
 }
 
 resource "azurerm_data_factory_linked_service_data_lake_storage_gen2" "datalake_ls" {
-  name                = "AzureDataLakeStoragetest"
+  name                = "AzureDataLakeStorage"
   data_factory_id     = azurerm_data_factory.data_factory.id
 
   storage_account_key = azurerm_storage_account.data_lake.primary_access_key
@@ -255,7 +255,7 @@ JSON
 }
 
 resource "azurerm_data_factory_dataset_parquet" "parquet_data_weather" {
-  name                = "Parquet_data_weather_test"
+  name                = "Parquet_data_weather"
   data_factory_id     = azurerm_data_factory.data_factory.id
   linked_service_name = azurerm_data_factory_linked_service_data_lake_storage_gen2.datalake_ls.name
 
@@ -267,7 +267,7 @@ resource "azurerm_data_factory_dataset_parquet" "parquet_data_weather" {
 }
 
 resource "azurerm_data_factory_dataset_parquet" "parquet_file_piezo" {
-  name                = "Parquet_file_piezo_test"
+  name                = "Parquet_file_piezo"
   data_factory_id     = azurerm_data_factory.data_factory.id
   linked_service_name = azurerm_data_factory_linked_service_data_lake_storage_gen2.datalake_ls.name
 
@@ -579,7 +579,7 @@ sourceparquetdataweather sink(
 
 
 resource "azurerm_data_factory_pipeline" "pipeline_copy_data_in_db" {
-  name                    = "copy_data_in_db_test"
+  name                    = "copy_data_in_db"
   data_factory_id = azurerm_data_factory.data_factory.id
   activities_json         = <<JSON
   [
