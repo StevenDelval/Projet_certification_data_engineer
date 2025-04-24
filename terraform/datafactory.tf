@@ -48,19 +48,210 @@ resource "azurerm_data_factory_linked_service_data_lake_storage_gen2" "datalake_
 
 }
 
-resource "azurerm_data_factory_linked_service_postgresql" "postgres_ls" {
-  name              = "AzurePostgreSqltest"
+
+resource "azurerm_data_factory_linked_custom_service" "postgres_ls" {
+name              = "AzurePostgreSql"
   data_factory_id   = azurerm_data_factory.data_factory.id
 
-  connection_string = "Host=${azurerm_postgresql_flexible_server.postgres_server.fqdn};Port=5432;Database=${azurerm_postgresql_flexible_server_database.db_data.name};UID=${var.admin_login};EncryptionMethod=1;Password=${var.admin_password}"
+  type                 = "AzurePostgreSql"
+  
+  type_properties_json = <<JSON
+{
+  "connectionString":"host=${azurerm_postgresql_flexible_server.postgres_server.fqdn};port=5432;database=${azurerm_postgresql_flexible_server_database.db_data.name};uid=${var.admin_login};encryptionmethod=1;validateservercertificate=1;password=${var.admin_password}"
+}
+JSON
 }
 
-resource "azurerm_data_factory_dataset_postgresql" "table_meteo" {
-  name                = "TableMeteotest"
-  data_factory_id     = azurerm_data_factory.data_factory.id
-  linked_service_name = azurerm_data_factory_linked_service_postgresql.postgres_ls.name
 
-  table_name = "TableMeteoQuotidien"
+resource "azurerm_data_factory_custom_dataset" "table_meteo" {
+  name                = "TableMeteo"
+  data_factory_id     = azurerm_data_factory.data_factory.id
+  type            = "AzurePostgreSqlTable"
+
+  linked_service {
+    name = azurerm_data_factory_linked_custom_service.postgres_ls.name
+    
+  }
+
+  type_properties_json = <<JSON
+  {
+            "schema": "public",
+            "table": "TableMeteoQuotidien"
+        }
+JSON
+  schema_json = <<JSON
+  [
+            {
+                "name": "LAMBX",
+                "type": "bigint",
+                "precision": 0,
+                "scale": 0
+            },
+            {
+                "name": "LAMBY",
+                "type": "bigint",
+                "precision": 0,
+                "scale": 0
+            },
+            {
+                "name": "DATE",
+                "type": "text",
+                "precision": 0,
+                "scale": 0
+            },
+            {
+                "name": "PRENEI_Q",
+                "type": "double precision",
+                "precision": 0,
+                "scale": 0
+            },
+            {
+                "name": "PRELIQ_Q",
+                "type": "double precision",
+                "precision": 0,
+                "scale": 0
+            },
+            {
+                "name": "T_Q",
+                "type": "double precision",
+                "precision": 0,
+                "scale": 0
+            },
+            {
+                "name": "FF_Q",
+                "type": "double precision",
+                "precision": 0,
+                "scale": 0
+            },
+            {
+                "name": "Q_Q",
+                "type": "double precision",
+                "precision": 0,
+                "scale": 0
+            },
+            {
+                "name": "DLI_Q",
+                "type": "double precision",
+                "precision": 0,
+                "scale": 0
+            },
+            {
+                "name": "SSI_Q",
+                "type": "double precision",
+                "precision": 0,
+                "scale": 0
+            },
+            {
+                "name": "HU_Q",
+                "type": "double precision",
+                "precision": 0,
+                "scale": 0
+            },
+            {
+                "name": "EVAP_Q",
+                "type": "double precision",
+                "precision": 0,
+                "scale": 0
+            },
+            {
+                "name": "ETP_Q",
+                "type": "double precision",
+                "precision": 0,
+                "scale": 0
+            },
+            {
+                "name": "PE_Q",
+                "type": "double precision",
+                "precision": 0,
+                "scale": 0
+            },
+            {
+                "name": "SWI_Q",
+                "type": "double precision",
+                "precision": 0,
+                "scale": 0
+            },
+            {
+                "name": "DRAINC_Q",
+                "type": "double precision",
+                "precision": 0,
+                "scale": 0
+            },
+            {
+                "name": "RUNC_Q",
+                "type": "double precision",
+                "precision": 0,
+                "scale": 0
+            },
+            {
+                "name": "RESR_NEIGE_Q",
+                "type": "double precision",
+                "precision": 0,
+                "scale": 0
+            },
+            {
+                "name": "RESR_NEIGE6_Q",
+                "type": "double precision",
+                "precision": 0,
+                "scale": 0
+            },
+            {
+                "name": "HTEURNEIGE_Q",
+                "type": "double precision",
+                "precision": 0,
+                "scale": 0
+            },
+            {
+                "name": "HTEURNEIGE6_Q",
+                "type": "double precision",
+                "precision": 0,
+                "scale": 0
+            },
+            {
+                "name": "HTEURNEIGEX_Q",
+                "type": "double precision",
+                "precision": 0,
+                "scale": 0
+            },
+            {
+                "name": "SNOW_FRAC_Q",
+                "type": "double precision",
+                "precision": 0,
+                "scale": 0
+            },
+            {
+                "name": "ECOULEMENT_Q",
+                "type": "double precision",
+                "precision": 0,
+                "scale": 0
+            },
+            {
+                "name": "WG_RACINE_Q",
+                "type": "double precision",
+                "precision": 0,
+                "scale": 0
+            },
+            {
+                "name": "WGI_RACINE_Q",
+                "type": "double precision",
+                "precision": 0,
+                "scale": 0
+            },
+            {
+                "name": "TINF_H_Q",
+                "type": "double precision",
+                "precision": 0,
+                "scale": 0
+            },
+            {
+                "name": "TSUP_H_Q",
+                "type": "double precision",
+                "precision": 0,
+                "scale": 0
+            }
+        ]
+JSON
+
 }
 
 resource "azurerm_data_factory_dataset_parquet" "parquet_data_weather" {
@@ -282,6 +473,109 @@ resource "azurerm_data_factory_pipeline" "pipeline_get_api" {
 }
 
 
+resource "azurerm_data_factory_data_flow" "copy_data_weather" {
+  name            = "copy_data_weather"
+  data_factory_id = azurerm_data_factory.data_factory.id
+
+  source {
+    name = "sourceparquetdataweather"
+
+
+    dataset {
+      name = azurerm_data_factory_dataset_parquet.parquet_data_weather.name
+    }
+  }
+
+  sink {
+    name = "postgreTableMeteoQuotidien"
+
+    dataset {
+      name = azurerm_data_factory_custom_dataset.table_meteo.name
+    }
+  }
+
+  script = <<EOT
+    source(
+    output(
+        LAMBX as long,
+        LAMBY as long,
+        DATE as string,
+        PRENEI_Q as double,
+        PRELIQ_Q as double,
+        T_Q as double,
+        FF_Q as double,
+        Q_Q as double,
+        DLI_Q as double,
+        SSI_Q as double,
+        HU_Q as double,
+        EVAP_Q as double,
+        ETP_Q as double,
+        PE_Q as double,
+        SWI_Q as double,
+        DRAINC_Q as double,
+        RUNC_Q as double,
+        RESR_NEIGE_Q as double,
+        RESR_NEIGE6_Q as double,
+        HTEURNEIGE_Q as double,
+        HTEURNEIGE6_Q as double,
+        HTEURNEIGEX_Q as double,
+        SNOW_FRAC_Q as double,
+        ECOULEMENT_Q as double,
+        WG_RACINE_Q as double,
+        WGI_RACINE_Q as double,
+        TINF_H_Q as double,
+        TSUP_H_Q as double
+    ),
+    allowSchemaDrift: true,
+    validateSchema: false,
+    ignoreNoFilesFound: false,
+    format: 'parquet'
+) ~> sourceparquetdataweather
+
+sourceparquetdataweather sink(
+    allowSchemaDrift: true,
+    validateSchema: false,
+    input(
+        LAMBX as long,
+        LAMBY as long,
+        DATE as string,
+        PRENEI_Q as double,
+        PRELIQ_Q as double,
+        T_Q as double,
+        FF_Q as double,
+        Q_Q as double,
+        DLI_Q as double,
+        SSI_Q as double,
+        HU_Q as double,
+        EVAP_Q as double,
+        ETP_Q as double,
+        PE_Q as double,
+        SWI_Q as double,
+        DRAINC_Q as double,
+        RUNC_Q as double,
+        RESR_NEIGE_Q as double,
+        RESR_NEIGE6_Q as double,
+        HTEURNEIGE_Q as double,
+        HTEURNEIGE6_Q as double,
+        HTEURNEIGEX_Q as double,
+        SNOW_FRAC_Q as double,
+        ECOULEMENT_Q as double,
+        WG_RACINE_Q as double,
+        WGI_RACINE_Q as double,
+        TINF_H_Q as double,
+        TSUP_H_Q as double
+    ),
+    deletable: false,
+    insertable: true,
+    updateable: false,
+    upsertable: false,
+    truncate: true,
+    format: 'table',
+    skipDuplicateMapInputs: true,
+    skipDuplicateMapOutputs: true
+) ~> postgreTableMeteoQuotidien
+    EOT
+}
 
 
 resource "azurerm_data_factory_pipeline" "pipeline_copy_data_in_db" {
@@ -303,7 +597,7 @@ resource "azurerm_data_factory_pipeline" "pipeline_copy_data_in_db" {
         "userProperties": [],
         "typeProperties": {
             "dataflow": {
-            "referenceName": "copy_data_weather",
+            "referenceName": "${azurerm_data_factory_data_flow.copy_data_weather.name}",
             "type": "DataFlowReference"
             },
             "compute": {
