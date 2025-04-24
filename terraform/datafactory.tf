@@ -39,6 +39,54 @@ resource "azurerm_data_factory_dataset_sql_server_table" "table_control_for_api"
   table_name              = "ApiControlTable"
 }
 
+resource "azurerm_data_factory_linked_service_data_lake_storage_gen2" "datalake_ls" {
+  name                = "AzureDataLakeStoragetest"
+  data_factory_id     = azurerm_data_factory.data_factory.id
+
+  storage_account_key = azurerm_storage_account.data_lake.primary_access_key
+  url = "https://${azurerm_storage_account.data_lake.name}.dfs.core.windows.net/"
+
+}
+
+resource "azurerm_data_factory_linked_service_postgresql" "postgres_ls" {
+  name              = "AzurePostgreSqltest"
+  data_factory_id   = azurerm_data_factory.data_factory.id
+
+  connection_string = "Host=${azurerm_postgresql_flexible_server.postgres_server.fqdn};Port=5432;Database=${azurerm_postgresql_flexible_server_database.db_data.name};UID=${var.admin_login};EncryptionMethod=1;Password=${var.admin_password}"
+}
+
+resource "azurerm_data_factory_dataset_postgresql" "table_meteo" {
+  name                = "TableMeteotest"
+  data_factory_id     = azurerm_data_factory.data_factory.id
+  linked_service_name = azurerm_data_factory_linked_service_postgresql.postgres_ls.name
+
+  table_name = "TableMeteoQuotidien"
+}
+
+resource "azurerm_data_factory_dataset_parquet" "parquet_data_weather" {
+  name                = "Parquet_data_weather_test"
+  data_factory_id     = azurerm_data_factory.data_factory.id
+  linked_service_name = azurerm_data_factory_linked_service_data_lake_storage_gen2.datalake_ls.name
+
+  azure_blob_fs_location {
+    file_system = "donnees-meteo"
+    path = "quotidien"
+  }
+  compression_codec = "snappy"
+}
+
+resource "azurerm_data_factory_dataset_parquet" "parquet_file_piezo" {
+  name                = "Parquet_file_piezo_test"
+  data_factory_id     = azurerm_data_factory.data_factory.id
+  linked_service_name = azurerm_data_factory_linked_service_data_lake_storage_gen2.datalake_ls.name
+
+  azure_blob_fs_location {
+    file_system = "donnees-piezometre"
+    path = "quotidien"
+  }
+  compression_codec = "snappy"
+}
+
 
 resource "azurerm_data_factory_pipeline" "pipeline_get_csv" {
   name                    = "pipeline_get_csv"
@@ -233,6 +281,41 @@ resource "azurerm_data_factory_pipeline" "pipeline_get_api" {
   JSON
 }
 
+
+
+
+resource "azurerm_data_factory_pipeline" "pipeline_copy_data_in_db" {
+  name                    = "copy_data_in_db_test"
+  data_factory_id = azurerm_data_factory.data_factory.id
+  activities_json         = <<JSON
+  [
+    {
+        "name": "Data flow copy data weather",
+        "type": "ExecuteDataFlow",
+        "dependsOn": [],
+        "policy": {
+            "timeout": "0.12:00:00",
+            "retry": 0,
+            "retryIntervalInSeconds": 30,
+            "secureOutput": false,
+            "secureInput": false
+        },
+        "userProperties": [],
+        "typeProperties": {
+            "dataflow": {
+            "referenceName": "copy_data_weather",
+            "type": "DataFlowReference"
+            },
+            "compute": {
+            "coreCount": 8,
+            "computeType": "General"
+            },
+            "traceLevel": "Fine"
+        }
+    }
+  ]
+  JSON
+}
     
 resource "azurerm_data_factory_trigger_schedule" "trigger_schedule" {
   name            = "trigger_schedule"
