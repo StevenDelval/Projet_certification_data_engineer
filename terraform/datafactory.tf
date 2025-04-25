@@ -30,6 +30,7 @@ resource "azurerm_data_factory_dataset_sql_server_table" "table_control_for_csv"
   data_factory_id     = azurerm_data_factory.data_factory.id
   linked_service_name = azurerm_data_factory_linked_service_sql_server.ct_database.name
   table_name          = "CsvControlTable"
+  folder = "ControlTables"
 }
 
 resource "azurerm_data_factory_dataset_sql_server_table" "table_control_for_api" {
@@ -37,6 +38,7 @@ resource "azurerm_data_factory_dataset_sql_server_table" "table_control_for_api"
   data_factory_id     = azurerm_data_factory.data_factory.id
   linked_service_name = azurerm_data_factory_linked_service_sql_server.ct_database.name
   table_name          = "ApiControlTable"
+  folder = "ControlTables"
 }
 
 resource "azurerm_data_factory_linked_service_data_lake_storage_gen2" "datalake_ls" {
@@ -67,6 +69,7 @@ resource "azurerm_data_factory_custom_dataset" "table_meteo_quotidien" {
   name            = "TableMeteoQuotidien"
   data_factory_id = azurerm_data_factory.data_factory.id
   type            = "AzurePostgreSqlTable"
+  folder = "PostgresTables"
 
   linked_service {
     name = azurerm_data_factory_linked_custom_service.postgres_ls.name
@@ -258,6 +261,7 @@ resource "azurerm_data_factory_custom_dataset" "table_piezo_quotidien" {
   name            = "TablePiezoQuotidien"
   data_factory_id = azurerm_data_factory.data_factory.id
   type            = "AzurePostgreSqlTable"
+  folder = "PostgresTables"
 
   linked_service {
     name = azurerm_data_factory_linked_custom_service.postgres_ls.name
@@ -341,6 +345,7 @@ resource "azurerm_data_factory_custom_dataset" "table_piezo_info" {
   name            = "TablePiezoInfo"
   data_factory_id = azurerm_data_factory.data_factory.id
   type            = "AzurePostgreSqlTable"
+  folder = "PostgresTables"
 
   linked_service {
     name = azurerm_data_factory_linked_custom_service.postgres_ls.name
@@ -388,6 +393,7 @@ resource "azurerm_data_factory_custom_dataset" "table_continuite" {
   name            = "Continuite"
   data_factory_id = azurerm_data_factory.data_factory.id
   type            = "AzurePostgreSqlTable"
+  folder = "PostgresTables"
 
   linked_service {
     name = azurerm_data_factory_linked_custom_service.postgres_ls.name
@@ -422,6 +428,7 @@ resource "azurerm_data_factory_custom_dataset" "table_nature_mesure" {
   name            = "Nature_mesure"
   data_factory_id = azurerm_data_factory.data_factory.id
   type            = "AzurePostgreSqlTable"
+  folder = "PostgresTables"
 
   linked_service {
     name = azurerm_data_factory_linked_custom_service.postgres_ls.name
@@ -457,6 +464,7 @@ resource "azurerm_data_factory_custom_dataset" "table_producteur" {
   name            = "Producteur"
   data_factory_id = azurerm_data_factory.data_factory.id
   type            = "AzurePostgreSqlTable"
+  folder = "PostgresTables"
 
   linked_service {
     name = azurerm_data_factory_linked_custom_service.postgres_ls.name
@@ -494,6 +502,7 @@ resource "azurerm_data_factory_dataset_parquet" "parquet_data_weather" {
   name                = "Parquet_data_weather"
   data_factory_id     = azurerm_data_factory.data_factory.id
   linked_service_name = azurerm_data_factory_linked_service_data_lake_storage_gen2.datalake_ls.name
+  folder = "ParquetFiles"
 
   azure_blob_fs_location {
     file_system = "donnees-meteo"
@@ -506,6 +515,7 @@ resource "azurerm_data_factory_dataset_parquet" "parquet_file_piezo" {
   name                = "Parquet_file_piezo"
   data_factory_id     = azurerm_data_factory.data_factory.id
   linked_service_name = azurerm_data_factory_linked_service_data_lake_storage_gen2.datalake_ls.name
+  folder = "ParquetFiles"
 
   azure_blob_fs_location {
     file_system = "donnees-piezometre"
@@ -518,6 +528,7 @@ resource "azurerm_data_factory_dataset_parquet" "parquet_file_piezo" {
 resource "azurerm_data_factory_pipeline" "pipeline_get_csv" {
   name            = "pipeline_get_csv"
   data_factory_id = azurerm_data_factory.data_factory.id
+  folder = "Extration"
   activities_json = <<JSON
   [
       {
@@ -628,6 +639,7 @@ resource "azurerm_data_factory_pipeline" "pipeline_get_csv" {
 resource "azurerm_data_factory_pipeline" "pipeline_get_api" {
   name            = "pipeline_get_api"
   data_factory_id = azurerm_data_factory.data_factory.id
+  folder = "Extration"
   activities_json = <<JSON
   [
       {
@@ -1064,6 +1076,7 @@ resource "azurerm_data_factory_data_flow" "copy_data_table_piezo_quotidien" {
 resource "azurerm_data_factory_pipeline" "pipeline_copy_data_in_db" {
   name            = "copy_data_in_db"
   data_factory_id = azurerm_data_factory.data_factory.id
+  folder = "CopyInDB"
   activities_json = <<JSON
    [
         {
