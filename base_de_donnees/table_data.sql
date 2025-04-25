@@ -53,7 +53,7 @@ CREATE TABLE "Continuite" (
 
 -- Table des producteurs
 CREATE TABLE "Producteur" (
-  "code_producteur" INTEGER PRIMARY KEY,
+  "code_producteur" BIGINT PRIMARY KEY,
   "nom_producteur" VARCHAR(255)
 );
 
@@ -63,7 +63,7 @@ CREATE TABLE "TablePiezoQuotidien" (
   "date_mesure" DATE,
   "code_nature_mesure" VARCHAR(100),
   "code_continuite" INTEGER,
-  "code_producteur" INTEGER,
+  "code_producteur" BIGINT,
   "qualification" VARCHAR(100),
   "statut" VARCHAR(100),
   "mode_obtention" VARCHAR(100),
