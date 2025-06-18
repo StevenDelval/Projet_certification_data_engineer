@@ -80,5 +80,5 @@ CREATE TABLE "TablePiezoQuotidien" (
 INSERT INTO "TablePiezoInfo" ("code_bss","urn_bss", "LAMBX", "LAMBY")
 VALUES
   ('00263X0129/PZASA4','test', 6280, 25850),
-  ('00026X0040/P1','test', 2019, 2019),
-  ('00053X0004/F1','test', 2029, 2029);
+  ('00026X0040/P1','test', 5640,26650),
+  ('00053X0004/F1','test', 5560,26570);
