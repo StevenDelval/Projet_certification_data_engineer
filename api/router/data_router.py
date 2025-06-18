@@ -26,3 +26,7 @@ def get_hello():
     """
     return "Hello !"
 
+
+@router.get("/meteo/{date}/{lambx}/{lamby}")
+def read_meteo_point(date: str, lambx: int, lamby: int, db: Session = Depends(get_db)):
+    return crud.get_meteo_by_date_coords(db, date, lambx, lamby)
