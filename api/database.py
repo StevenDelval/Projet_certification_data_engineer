@@ -18,13 +18,13 @@ else:
     bdd_path = 'sqlite:///database.db'
 
 # Create a SQLAlchemy engine for the specified database
-engine = create_engine(bdd_path, connect_args={"check_same_thread": False})
+engine = create_engine(bdd_path)
 
 # Create a session factory bound to the engine
 Session = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 # Define a base class for declarative class definitions
-Base: DeclarativeMeta = declarative_base()
+Base = declarative_base()
 
 
 def get_db():
