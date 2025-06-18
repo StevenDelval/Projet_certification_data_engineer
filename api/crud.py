@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from models import User
+from models import User, TableMeteoQuotidien, TablePiezoInfo, Nature_mesure, Continuite, Producteur, TablePiezoQuotidien
 from schemas import UserCreate
 from passlib.context import CryptContext
 
@@ -44,3 +44,9 @@ def create_user(db: Session, user: UserCreate):
     db.commit()
     db.refresh(db_user)
     return db_user
+
+def get_row_by_primary_keys(db: Session, model, **pk_values):
+    return db.query(model).get(tuple(pk_values.values()))
+
+def get_meteo_by_date_coords(db: Session, date, lambx, lamby):
+    return get_row_by_primary_keys(db, TableMeteoQuotidien, DATE=date, LAMBX=lambx, LAMBY=lamby)
