@@ -51,8 +51,41 @@ def get_row_by_primary_keys(db: Session, model, **pk_values):
 def get_meteo_by_date_coords(db: Session, date, lambx, lamby):
     return get_row_by_primary_keys(db, TableMeteoQuotidien, DATE=date, LAMBX=lambx, LAMBY=lamby)
 
-def get_paginated_piezo_data_by_code_bss(db: Session, code_bss: str, offset: int = 0, limit: int = 50):
-    query = db.query(TablePiezoQuotidien).filter(TablePiezoQuotidien.code_bss == code_bss)
+def get_paginated_piezo_data_by_code_bss(
+        db: Session,
+        code_bss: str,
+        offset: int = 0,
+        limit: int = 50,
+        include_info: bool = False,
+        include_continuite: bool = False,
+        include_nature: bool = False,
+        include_producteur: bool = False,
+    ):
+    columns = [TablePiezoQuotidien]
+
+    if include_info:
+        columns.append(TablePiezoInfo)
+    if include_continuite:
+        columns.append(Continuite)
+    if include_nature:
+        columns.append(Nature_mesure)
+    if include_producteur:
+        columns.append(Producteur)
+
+    query = db.query(*columns).filter(TablePiezoQuotidien.code_bss == code_bss)
+
+    if include_info:
+        query = query.join(TablePiezoInfo, TablePiezoQuotidien.code_bss == TablePiezoInfo.code_bss)
+
+    if include_continuite:
+        query = query.outerjoin(Continuite, TablePiezoQuotidien.code_continuite == Continuite.code_continuite)
+
+    if include_nature:
+        query = query.outerjoin(Nature_mesure, TablePiezoQuotidien.code_nature_mesure == Nature_mesure.code_nature_mesure)
+
+    if include_producteur:
+        query = query.outerjoin(Producteur, TablePiezoQuotidien.code_producteur == Producteur.code_producteur)
+
     total = query.count()
 
     results = (
