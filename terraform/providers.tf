@@ -16,3 +16,6 @@ provider "archive" {
 provider "null" {
   
 }
+provider "template" {
+  
+}
