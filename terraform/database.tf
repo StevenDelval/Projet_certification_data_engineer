@@ -84,3 +84,27 @@ resource "null_resource" "create_table" {
   }
   depends_on = [azurerm_postgresql_flexible_server_database.db_data]
 }
+
+data "template_file" "readonly_user_sql" {
+  template = file("../base_de_donnees/api_service.sql")
+
+  vars = {
+    username = var.readonly_username
+    password = var.readonly_password
+  }
+}
+
+resource "null_resource" "create_readonly_user" {
+  provisioner "local-exec" {
+    command = <<EOT
+      echo "Creating readonly user..."
+      echo "${data.template_file.readonly_user_sql.rendered}" | \
+      PGPASSWORD="${var.admin_password}" \
+      psql -h ${azurerm_postgresql_flexible_server.postgres_server.fqdn} \
+           -U ${var.admin_login} \
+           -d ${azurerm_postgresql_flexible_server_database.db_data.name}
+    EOT
+  }
+
+  depends_on = [null_resource.create_table]
+}
