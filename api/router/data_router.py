@@ -55,7 +55,7 @@ def read_piezo_value(
 
     results = []
     for row in rows:
-        piezo = row[0]
+        piezo = row[0] if isinstance(row, tuple) else row
 
         # Initialise les autres à None
         info = continuite = nature = producteur = None
