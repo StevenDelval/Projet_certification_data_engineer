@@ -2,7 +2,7 @@ from fastapi import FastAPI, Depends, HTTPException, status, APIRouter
 from sqlalchemy.orm import Session
 from datetime import datetime, timedelta
 from database import get_db
-from models import Base, User
+from models import Base, users
 import crud, auth, schemas
 
 
