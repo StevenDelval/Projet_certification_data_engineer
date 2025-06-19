@@ -1,5 +1,5 @@
 -- Table des données météo quotidiennes
-CREATE TABLE "TableMeteoQuotidien" (
+CREATE TABLE IF NOT EXISTS "TableMeteoQuotidien" (
   "DATE" DATE,
   "LAMBX" INTEGER,
   "LAMBY" INTEGER,
@@ -32,7 +32,7 @@ CREATE TABLE "TableMeteoQuotidien" (
 );
 
 -- Table des points piézométriques
-CREATE TABLE "TablePiezoInfo" (
+CREATE TABLE IF NOT EXISTS "TablePiezoInfo" (
   "code_bss" VARCHAR(100) PRIMARY KEY,
   "urn_bss" VARCHAR(255),
   "LAMBX" INTEGER,
@@ -40,25 +40,25 @@ CREATE TABLE "TablePiezoInfo" (
 );
 
 -- Table des types de mesure
-CREATE TABLE "Nature_mesure" (
+CREATE TABLE IF NOT EXISTS "Nature_mesure" (
   "code_nature_mesure" VARCHAR(100) PRIMARY KEY,
   "nom_nature_mesure" VARCHAR(255)
 );
 
 -- Table des types de continuité
-CREATE TABLE "Continuite" (
+CREATE TABLE IF NOT EXISTS "Continuite" (
   "code_continuite" INTEGER PRIMARY KEY,
   "nom_continuite" VARCHAR(255)
 );
 
 -- Table des producteurs
-CREATE TABLE "Producteur" (
+CREATE TABLE IF NOT EXISTS "Producteur" (
   "code_producteur" BIGINT PRIMARY KEY,
   "nom_producteur" VARCHAR(255)
 );
 
 -- Table des mesures piézométriques quotidiennes
-CREATE TABLE "TablePiezoQuotidien" (
+CREATE TABLE IF NOT EXISTS "TablePiezoQuotidien" (
   "code_bss" VARCHAR(100),
   "date_mesure" DATE,
   "code_nature_mesure" VARCHAR(100),
@@ -74,6 +74,12 @@ CREATE TABLE "TablePiezoQuotidien" (
   FOREIGN KEY ("code_nature_mesure") REFERENCES "Nature_mesure" ("code_nature_mesure"),
   FOREIGN KEY ("code_continuite") REFERENCES "Continuite" ("code_continuite"),
   FOREIGN KEY ("code_producteur") REFERENCES "Producteur" ("code_producteur")
+);
+
+CREATE TABLE IF NOT EXISTS "users" (
+  "id" SERIAL PRIMARY KEY,
+  "username" VARCHAR(100) UNIQUE NOT NULL,
+  "hashed_password" VARCHAR NOT NULL
 );
 
 -- Insertion d'exemples dans TablePiezoInfo
