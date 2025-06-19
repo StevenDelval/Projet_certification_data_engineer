@@ -40,3 +40,27 @@ variable "admin_password" {
   type        = string
   sensitive   = true
 }
+
+variable "readonly_username" {
+  type        = string
+  description = "Nom de l'utilisateur en lecture seule"
+  default     = "readonly_user"
+}
+
+variable "readonly_password" {
+  type        = string
+  description = "Mot de passe de l'utilisateur readonly"
+  sensitive   = true
+}
+
+variable "secret_key" {
+  type        = string
+  description = "SECRET_KEY pour l'api"
+  sensitive   = true
+}
+
+variable "algorithm" {
+  type        = string
+  description = "ALGORITHM pour l'api"
+  sensitive   = true
+}
