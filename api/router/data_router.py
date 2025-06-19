@@ -34,18 +34,58 @@ def read_meteo_point(request: schemas.MeteoRequest, db: Session = Depends(get_db
 
 @router.post("/piezo_value/", response_model=schemas.PiezoPaginatedResponse)
 def read_piezo_value(
-        request: schemas.PiezoRequest,
-        db: Session = Depends(get_db),
-        limit: int = Query(50, ge=1, le=1000),
-        offset: int = Query(0, ge=0)
-    ):
-
-    total, results = crud.get_paginated_piezo_data_by_code_bss(
-        db, code_bss=request.code_bss, offset=offset, limit=limit
+    request: schemas.PiezoRequest,
+    db: Session = Depends(get_db),
+    limit: int = Query(50, ge=1, le=1000),
+    offset: int = Query(0, ge=0),
+):
+    total, rows = crud.get_paginated_piezo_data_by_code_bss(
+        db=db,
+        code_bss=request.code_bss,
+        offset=offset,
+        limit=limit,
+        include_info=request.include_info,
+        include_continuite=request.include_continuite,
+        include_nature=request.include_nature,
+        include_producteur=request.include_producteur
     )
 
-    if not results:
-        raise HTTPException(status_code=404, detail="No piezo data found for the given code_bss.")
+    if not rows:
+        raise HTTPException(status_code=404, detail="No piezo data found.")
+
+    results = []
+    for row in rows:
+        piezo = row[0]
+
+        # Initialise les autres à None
+        info = continuite = nature = producteur = None
+
+        idx = 1
+        if request.include_info:
+            info = row[idx]
+            idx += 1
+        if request.include_continuite:
+            continuite = row[idx]
+            idx += 1
+        if request.include_nature:
+            nature = row[idx]
+            idx += 1
+        if request.include_producteur:
+            producteur = row[idx]
+
+
+        results.append(schemas.PiezoDataOut(
+            code_bss=piezo.code_bss,
+            date_mesure=piezo.date_mesure,
+            niveau_nappe_eau=piezo.niveau_nappe_eau,
+            profondeur_nappe=piezo.profondeur_nappe,
+
+            info = info if request.include_info else None,
+            continuite = continuite if request.include_continuite else None,
+            nature_mesure = nature if request.include_nature else None,
+            producteur = producteur if request.include_producteur else None
+
+        ))
 
     return schemas.PiezoPaginatedResponse(
         total=total,
