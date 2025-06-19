@@ -53,18 +53,19 @@ resource "azurerm_container_group" "container_group" {
     }
 
     environment_variables = {
-        IS_POSTGRES=0
-        DB_USERNAME=""
-        DB_HOSTNAME=""
+        IS_POSTGRES=1
+        DB_USERNAME=var.readonly_username
+        DB_HOSTNAME=azurerm_postgresql_flexible_server.postgres_server.fqdn
         DB_PORT="5432"
-        DB_NAME=""    
-        SECRET_KEY="your_secret_key"
-        ALGORITHM="HS256"
-        ACCESS_TOKEN_EXPIRE_MINUTES=30
+        DB_NAME = azurerm_postgresql_flexible_server_database.db_data.name  
+        
     }
 
     secure_environment_variables = {
-      DB_PASSWORD=""
+      SECRET_KEY=var.secret_key
+      ALGORITHM=var.algorithm
+      ACCESS_TOKEN_EXPIRE_MINUTES=30
+      DB_PASSWORD=var.readonly_password
     }
   }
 
