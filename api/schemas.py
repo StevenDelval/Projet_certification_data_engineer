@@ -1,4 +1,6 @@
-from pydantic import BaseModel
+from typing import List
+from datetime import date
+from pydantic import BaseModel, Field
 
 class UserCreate(BaseModel):
     """
@@ -35,3 +37,67 @@ class UserOut(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+
+class MeteoRequest(BaseModel):
+    input_date: date = Field(..., description="Date in YYYY-MM-DD format")
+    lambx: int = Field(..., description="Lambert X coordinate")
+    lamby: int = Field(..., description="Lambert Y coordinate")
+
+from typing import Optional
+
+class MeteoDataOut(BaseModel):
+    DATE: date
+    PRENEI_Q: Optional[float]
+    PRELIQ_Q: Optional[float]
+    T_Q: Optional[float]
+    FF_Q: Optional[float]
+    Q_Q: Optional[float]
+    DLI_Q: Optional[float]
+    SSI_Q: Optional[float]
+    HU_Q: Optional[float]
+    EVAP_Q: Optional[float]
+    ETP_Q: Optional[float]
+    PE_Q: Optional[float]
+    SWI_Q: Optional[float]
+    DRAINC_Q: Optional[float]
+    RUNC_Q: Optional[float]
+    RESR_NEIGE_Q: Optional[float]
+    RESR_NEIGE6_Q: Optional[float]
+    HTEURNEIGE_Q: Optional[float]
+    HTEURNEIGE6_Q: Optional[float]
+    HTEURNEIGEX_Q: Optional[float]
+    SNOW_FRAC_Q: Optional[float]
+    ECOULEMENT_Q: Optional[float]
+    WG_RACINE_Q: Optional[float]
+    WGI_RACINE_Q: Optional[float]
+    TINF_H_Q: Optional[float]
+    TSUP_H_Q: Optional[float]
+
+    class Config:
+        from_attributes = True
+
+class PiezoRequest(BaseModel):
+    code_bss: str
+
+class PiezoDataOut(BaseModel):
+    code_bss: str
+    date_mesure: date
+    code_nature_mesure: Optional[str]
+    code_continuite: Optional[int]
+    code_producteur: Optional[int]
+    qualification: Optional[str]
+    statut: Optional[str]
+    mode_obtention: Optional[str]
+    profondeur_nappe: Optional[float]
+    niveau_nappe_eau: Optional[float]
+
+    class Config:
+        from_attributes = True
+
+class PiezoPaginatedResponse(BaseModel):
+    total: int
+    limit: int
+    offset: int
+    results: List[PiezoDataOut]        
