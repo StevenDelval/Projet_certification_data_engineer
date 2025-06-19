@@ -80,21 +80,55 @@ class MeteoDataOut(BaseModel):
 
 class PiezoRequest(BaseModel):
     code_bss: str
+    include_info: Optional[bool] = False
+    include_continuite: Optional[bool] = False
+    include_nature: Optional[bool] = False
+    include_producteur: Optional[bool] = False
+
+class PiezoInfoOut(BaseModel):
+    code_bss: str
+    urn_bss: Optional[str]
+    LAMBX: Optional[int]
+    LAMBY: Optional[int]
+
+    class Config:
+        from_attributes = True
+
+class ContinuiteOut(BaseModel):
+    code_continuite: int
+    nom_continuite: Optional[str]
+
+    class Config:
+        from_attributes = True
+
+class NatureMesureOut(BaseModel):
+    code_nature_mesure: str
+    nom_nature_mesure: Optional[str]
+
+    class Config:
+        from_attributes = True
+
+class ProducteurOut(BaseModel):
+    code_producteur: int
+    nom_producteur: Optional[str]
+
+    class Config:
+        from_attributes = True
 
 class PiezoDataOut(BaseModel):
     code_bss: str
     date_mesure: date
-    code_nature_mesure: Optional[str]
-    code_continuite: Optional[int]
-    code_producteur: Optional[int]
-    qualification: Optional[str]
-    statut: Optional[str]
-    mode_obtention: Optional[str]
-    profondeur_nappe: Optional[float]
     niveau_nappe_eau: Optional[float]
+    profondeur_nappe: Optional[float]
+
+    info: Optional[PiezoInfoOut] = None
+    continuite: Optional[ContinuiteOut] = None
+    nature_mesure: Optional[NatureMesureOut] = None
+    producteur: Optional[ProducteurOut] = None
 
     class Config:
         from_attributes = True
+
 
 class PiezoPaginatedResponse(BaseModel):
     total: int
