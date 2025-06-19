@@ -50,3 +50,45 @@ def get_row_by_primary_keys(db: Session, model, **pk_values):
 
 def get_meteo_by_date_coords(db: Session, date, lambx, lamby):
     return get_row_by_primary_keys(db, TableMeteoQuotidien, DATE=date, LAMBX=lambx, LAMBY=lamby)
+
+def get_paginated_piezo_data_by_code_bss(db: Session, code_bss: str, offset: int = 0, limit: int = 50):
+    query = db.query(TablePiezoQuotidien).filter(TablePiezoQuotidien.code_bss == code_bss)
+    total = query.count()
+
+    results = (
+        query.order_by(TablePiezoQuotidien.date_mesure.desc())
+        .offset(offset)
+        .limit(limit)
+        .all()
+    )
+
+    return total, results
+
+def get_piezo_info_by_code_bss(db: Session, code_bss):
+    return get_row_by_primary_keys(db, TablePiezoInfo, code_bss=code_bss)
+
+def get_piezo_and_meteo_by_date_range_for_code_bss(db: Session,code_bss, start_date, end_date):
+    return (
+        db.query(
+            TablePiezoQuotidien.code_bss,
+            TablePiezoQuotidien.date_mesure,
+            TablePiezoQuotidien.profondeur_nappe,
+            TablePiezoQuotidien.niveau_nappe_eau,
+            TableMeteoQuotidien
+        )
+        .join(
+            TablePiezoInfo,
+            TablePiezoQuotidien.code_bss == TablePiezoInfo.code_bss
+        )
+        .join(
+            TableMeteoQuotidien,
+            (TablePiezoInfo.LAMBX == TableMeteoQuotidien.LAMBX) &
+            (TablePiezoInfo.LAMBY == TableMeteoQuotidien.LAMBY) &
+            (TablePiezoQuotidien.date_mesure == TableMeteoQuotidien.DATE)
+        )
+        .filter(
+            TablePiezoQuotidien.date_mesure.between(start_date, end_date)
+        )
+        .filter(TablePiezoQuotidien.code_bss == code_bss)
+        .all()
+    )
