@@ -103,151 +103,157 @@ resource "azurerm_data_factory_custom_dataset" "table_meteo_quotidien" {
             "scale": 0
         },
         {
-            "name": "PRENEI_Q",
+            "name": "PRENEI",
             "type": "double precision",
             "precision": 0,
             "scale": 0
         },
         {
-            "name": "PRELIQ_Q",
+            "name": "PRELIQ",
             "type": "double precision",
             "precision": 0,
             "scale": 0
         },
         {
-            "name": "T_Q",
+            "name": "T",
             "type": "double precision",
             "precision": 0,
             "scale": 0
         },
         {
-            "name": "FF_Q",
+            "name": "FF",
             "type": "double precision",
             "precision": 0,
             "scale": 0
         },
         {
-            "name": "Q_Q",
+            "name": "Q",
             "type": "double precision",
             "precision": 0,
             "scale": 0
         },
         {
-            "name": "DLI_Q",
+            "name": "DLI",
             "type": "double precision",
             "precision": 0,
             "scale": 0
         },
         {
-            "name": "SSI_Q",
+            "name": "SSI",
             "type": "double precision",
             "precision": 0,
             "scale": 0
         },
         {
-            "name": "HU_Q",
+            "name": "HU",
             "type": "double precision",
             "precision": 0,
             "scale": 0
         },
         {
-            "name": "EVAP_Q",
+            "name": "EVAP",
             "type": "double precision",
             "precision": 0,
             "scale": 0
         },
         {
-            "name": "ETP_Q",
+            "name": "ETP",
             "type": "double precision",
             "precision": 0,
             "scale": 0
         },
         {
-            "name": "PE_Q",
+            "name": "PE",
             "type": "double precision",
             "precision": 0,
             "scale": 0
         },
         {
-            "name": "SWI_Q",
+            "name": "SWI",
             "type": "double precision",
             "precision": 0,
             "scale": 0
         },
         {
-            "name": "DRAINC_Q",
+            "name": "SSWI_10J",
             "type": "double precision",
             "precision": 0,
             "scale": 0
         },
         {
-            "name": "RUNC_Q",
+            "name": "DRAINC",
             "type": "double precision",
             "precision": 0,
             "scale": 0
         },
         {
-            "name": "RESR_NEIGE_Q",
+            "name": "RUNC",
             "type": "double precision",
             "precision": 0,
             "scale": 0
         },
         {
-            "name": "RESR_NEIGE6_Q",
+            "name": "RESR_NEIGE",
             "type": "double precision",
             "precision": 0,
             "scale": 0
         },
         {
-            "name": "HTEURNEIGE_Q",
+            "name": "RESR_NEIGE6",
             "type": "double precision",
             "precision": 0,
             "scale": 0
         },
         {
-            "name": "HTEURNEIGE6_Q",
+            "name": "HTEURNEIGE",
             "type": "double precision",
             "precision": 0,
             "scale": 0
         },
         {
-            "name": "HTEURNEIGEX_Q",
+            "name": "HTEURNEIGE6",
             "type": "double precision",
             "precision": 0,
             "scale": 0
         },
         {
-            "name": "SNOW_FRAC_Q",
+            "name": "HTEURNEIGEX",
             "type": "double precision",
             "precision": 0,
             "scale": 0
         },
         {
-            "name": "ECOULEMENT_Q",
+            "name": "SNOW_FRAC",
             "type": "double precision",
             "precision": 0,
             "scale": 0
         },
         {
-            "name": "WG_RACINE_Q",
+            "name": "ECOULEMENT",
             "type": "double precision",
             "precision": 0,
             "scale": 0
         },
         {
-            "name": "WGI_RACINE_Q",
+            "name": "WG_RACINE",
             "type": "double precision",
             "precision": 0,
             "scale": 0
         },
         {
-            "name": "TINF_H_Q",
+            "name": "WGI_RACINE",
             "type": "double precision",
             "precision": 0,
             "scale": 0
         },
         {
-            "name": "TSUP_H_Q",
+            "name": "TINF_H",
+            "type": "double precision",
+            "precision": 0,
+            "scale": 0
+        },
+        {
+            "name": "TSUP_H",
             "type": "double precision",
             "precision": 0,
             "scale": 0
