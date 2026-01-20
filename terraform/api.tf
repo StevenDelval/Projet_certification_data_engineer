@@ -17,7 +17,7 @@ resource "null_resource" "docker_push" {
 
     cd ../api/
     az acr login --name $ACR_NAME
-    docker tag $ACR_IMAGE_NAME $ACR_LOGIN_SERVER/$ACR_IMAGE_NAME
+    docker build . -t "$ACR_LOGIN_SERVER/$ACR_IMAGE_NAME"
     docker push $ACR_LOGIN_SERVER/$ACR_IMAGE_NAME
 
     EOT
