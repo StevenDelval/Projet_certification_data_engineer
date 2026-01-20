@@ -64,3 +64,36 @@ variable "algorithm" {
   description = "ALGORITHM pour l'api"
   sensitive   = true
 }
+
+variable "git_repo_url" {
+  type        = string
+  description = "URL of the Git repository containing Databricks notebooks"
+  default = "https://github.com/StevenDelval/pipeline_qualite_eau.git"
+}
+
+variable "path_geojson" {
+  type        = string
+  description = "Path to the GeoJSON file for UDI geometry"
+}
+
+variable "users_notification" {
+  type    = list(string)
+}
+
+variable "city_db_fqdm" {
+  type = string
+  default = "carter-cash-serveur-postgresql.postgres.database.azure.com"
+}
+
+variable "city_db_name" {
+  type = string
+  default = "data_gouv_city_france"
+}
+
+variable "city_db_user" {
+  type = string
+}
+
+variable "city_db_pwd" {
+  type = string
+}
