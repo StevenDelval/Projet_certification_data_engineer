@@ -1,39 +1,24 @@
 from typing import List
 from datetime import date
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, EmailStr
 
 class UserCreate(BaseModel):
-    """
-    Pydantic model for creating a new user.
+    username: str
+    password: str
+    first_name: str
+    last_name: str
+    email: EmailStr
+    address: str
+    consent_given: bool
 
-    This model is used for validating and serializing the data required to create a new user.
-
-    Attributes:
-        username (str): The username for the new user. This should be a unique identifier.
-        password (str): The password for the new user. It will be hashed before storing.
-    """
+class UserLogin(BaseModel):
     username: str
     password: str
 
 class UserOut(BaseModel):
-    """
-    Pydantic model for representing a user in responses.
-
-    This model is used for serializing user data that is returned in API responses.
-
-    Attributes:
-        id (int): The unique identifier of the user.
-        username (str): The username of the user.
-
-    Config:
-        from_attributes (bool): This configuration allows the model to be created from ORM models directly.
-
-    Notes:
-        The `Config` subclass enables compatibility with ORM models by allowing `UserOut` to be constructed 
-        from attributes of ORM models.
-    """
     id: int
     username: str
+    email: EmailStr
 
     class Config:
         from_attributes = True
@@ -49,31 +34,31 @@ from typing import Optional
 
 class MeteoDataOut(BaseModel):
     DATE: date
-    PRENEI_Q: Optional[float]
-    PRELIQ_Q: Optional[float]
-    T_Q: Optional[float]
-    FF_Q: Optional[float]
-    Q_Q: Optional[float]
-    DLI_Q: Optional[float]
-    SSI_Q: Optional[float]
-    HU_Q: Optional[float]
-    EVAP_Q: Optional[float]
-    ETP_Q: Optional[float]
-    PE_Q: Optional[float]
-    SWI_Q: Optional[float]
-    DRAINC_Q: Optional[float]
-    RUNC_Q: Optional[float]
-    RESR_NEIGE_Q: Optional[float]
-    RESR_NEIGE6_Q: Optional[float]
-    HTEURNEIGE_Q: Optional[float]
-    HTEURNEIGE6_Q: Optional[float]
-    HTEURNEIGEX_Q: Optional[float]
-    SNOW_FRAC_Q: Optional[float]
-    ECOULEMENT_Q: Optional[float]
-    WG_RACINE_Q: Optional[float]
-    WGI_RACINE_Q: Optional[float]
-    TINF_H_Q: Optional[float]
-    TSUP_H_Q: Optional[float]
+    PRENEI: Optional[float]
+    PRELIQ: Optional[float]
+    T: Optional[float]
+    FF: Optional[float]
+    Q: Optional[float]
+    DLI: Optional[float]
+    SSI: Optional[float]
+    HU: Optional[float]
+    EVAP: Optional[float]
+    ETP: Optional[float]
+    PE: Optional[float]
+    SWI: Optional[float]
+    DRAINC: Optional[float]
+    RUNC: Optional[float]
+    RESR_NEIGE: Optional[float]
+    RESR_NEIGE6: Optional[float]
+    HTEURNEIGE: Optional[float]
+    HTEURNEIGE6: Optional[float]
+    HTEURNEIGEX: Optional[float]
+    SNOW_FRAC: Optional[float]
+    ECOULEMENT: Optional[float]
+    WG_RACINE: Optional[float]
+    WGI_RACINE: Optional[float]
+    TINF_H: Optional[float]
+    TSUP_H: Optional[float]
 
     class Config:
         from_attributes = True

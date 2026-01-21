@@ -77,11 +77,33 @@ CREATE TABLE IF NOT EXISTS "TablePiezoQuotidien" (
   FOREIGN KEY ("code_producteur") REFERENCES "Producteur" ("code_producteur")
 );
 
-CREATE TABLE IF NOT EXISTS "users" (
+CREATE TABLE IF NOT EXISTS users (
   "id" SERIAL PRIMARY KEY,
+
   "username" VARCHAR(100) UNIQUE NOT NULL,
-  "hashed_password" VARCHAR NOT NULL
+  "hashed_password" VARCHAR(255) NOT NULL,
+
+  "first_name" VARCHAR(100) NOT NULL,
+  "last_name" VARCHAR(100) NOT NULL,
+  "email" VARCHAR(100) UNIQUE NOT NULL,
+  "address" VARCHAR(255) NOT NULL,
+
+  -- RGPD : consentement
+  "consent_given" BOOLEAN NOT NULL DEFAULT FALSE,
+  "consent_date" TIMESTAMPTZ,
+  "consent_version" VARCHAR(20),
+
+  -- Cycle de vie RGPD
+  "is_active" BOOLEAN NOT NULL DEFAULT TRUE,
+  "deleted_at" TIMESTAMPTZ,
+
+  -- Audit
+  "created_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "last_login_at" TIMESTAMPTZ
 );
+CREATE INDEX idx_users_email ON users(email);
+CREATE INDEX idx_users_active ON users(is_active);
+
 
 -- Insertion d'exemples dans TablePiezoInfo
 INSERT INTO "TablePiezoInfo" ("code_bss","urn_bss", "LAMBX", "LAMBY")

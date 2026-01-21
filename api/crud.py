@@ -1,7 +1,9 @@
 from sqlalchemy.orm import Session
-from models import users, TableMeteoQuotidien, TablePiezoInfo, Nature_mesure, Continuite, Producteur, TablePiezoQuotidien
+from models import User, TableMeteoQuotidien, TablePiezoInfo, Nature_mesure, Continuite, Producteur, TablePiezoQuotidien
 from schemas import UserCreate
 from passlib.context import CryptContext
+from security import get_password_hash
+from datetime import datetime, timedelta, timezone
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -20,7 +22,8 @@ def get_user(db: Session, username: str):
         The function performs a query to find a user with the matching username. 
         It returns the first matching user or None if no user is found.
     """
-    return db.query(users).filter(users.username == username).first()
+    return db.query(User).filter(User.username == username).first()
+
 
 def create_user(db: Session, user: UserCreate):
     """
@@ -38,8 +41,17 @@ def create_user(db: Session, user: UserCreate):
         instance with the hashed password. The new user is then added to the database, committed, 
         and refreshed to obtain the new user’s ID.
     """
-    hashed_password = pwd_context.hash(user.password)
-    db_user = users(username=user.username, hashed_password=hashed_password)
+    db_user = User(
+        username=user.username,
+        hashed_password=get_password_hash(user.password),
+        first_name=user.first_name,
+        last_name=user.last_name,
+        email=user.email,
+        address=user.address,
+        consent_given=user.consent_given,
+        consent_date=datetime.utcnow(),
+        consent_version="v1.0"
+)
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
