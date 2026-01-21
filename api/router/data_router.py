@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from datetime import datetime, timedelta
 from database import get_db
 from models import Base, users
-import crud, auth, schemas
+import crud, auth, schemas, models
 
 
 
@@ -55,12 +55,11 @@ def read_piezo_value(
 
     results = []
     for row in rows:
-        piezo = row[0] if isinstance(row, tuple) else row
+        piezo = row[0] if not isinstance(row, models.TablePiezoQuotidien) else row
 
-        # Initialise les autres à None
         info = continuite = nature = producteur = None
-
         idx = 1
+
         if request.include_info:
             info = row[idx]
             idx += 1
@@ -73,18 +72,15 @@ def read_piezo_value(
         if request.include_producteur:
             producteur = row[idx]
 
-
         results.append(schemas.PiezoDataOut(
             code_bss=piezo.code_bss,
             date_mesure=piezo.date_mesure,
             niveau_nappe_eau=piezo.niveau_nappe_eau,
             profondeur_nappe=piezo.profondeur_nappe,
-
-            info = info if request.include_info else None,
-            continuite = continuite if request.include_continuite else None,
-            nature_mesure = nature if request.include_nature else None,
-            producteur = producteur if request.include_producteur else None
-
+            info=info if request.include_info else None,
+            continuite=continuite if request.include_continuite else None,
+            nature_mesure=nature if request.include_nature else None,
+            producteur=producteur if request.include_producteur else None,
         ))
 
     return schemas.PiezoPaginatedResponse(
