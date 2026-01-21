@@ -56,6 +56,7 @@ resource "azurerm_data_factory_linked_custom_service" "postgres_ls" {
   data_factory_id = azurerm_data_factory.data_factory.id
 
   type = "AzurePostgreSql"
+  additional_properties = {version: "2.0"}
 
   type_properties_json = <<JSON
 {
@@ -70,6 +71,7 @@ resource "azurerm_data_factory_linked_custom_service" "postgres_ls_city" {
   data_factory_id = azurerm_data_factory.data_factory.id
 
   type = "AzurePostgreSql"
+  additional_properties = {version: "2.0"}
 
   type_properties_json = <<JSON
 {
