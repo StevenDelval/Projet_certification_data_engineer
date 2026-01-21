@@ -137,3 +137,9 @@ def get_piezo_and_meteo_by_date_range_for_code_bss(db: Session,code_bss, start_d
         .filter(TablePiezoQuotidien.code_bss == code_bss)
         .all()
     )
+
+def update_last_login(db: Session, user):
+    user.last_login_at = datetime.now(timezone.utc)
+    db.commit()
+    db.refresh(user)
+    return user
