@@ -10,6 +10,7 @@ AutoBase.prepare(engine, reflect=True)
 
 Meteo = AutoBase.classes.Meteo
 Info_nappe = AutoBase.classes.Info_nappe
+Localisation = AutoBase.classes.Localisation
 Nature_mesure = AutoBase.classes.Nature_mesure
 Continuite = AutoBase.classes.Continuite
 Producteur = AutoBase.classes.Producteur
