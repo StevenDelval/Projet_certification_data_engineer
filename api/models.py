@@ -8,12 +8,12 @@ from database import Base, engine
 AutoBase = automap_base()
 AutoBase.prepare(engine, reflect=True)
 
-TableMeteoQuotidien = AutoBase.classes.TableMeteoQuotidien
-TablePiezoInfo = AutoBase.classes.TablePiezoInfo
+Meteo = AutoBase.classes.Meteo
+Info_nappe = AutoBase.classes.Info_nappe
 Nature_mesure = AutoBase.classes.Nature_mesure
 Continuite = AutoBase.classes.Continuite
 Producteur = AutoBase.classes.Producteur
-TablePiezoQuotidien = AutoBase.classes.TablePiezoQuotidien
+Nappe = AutoBase.classes.Nappe
 users = AutoBase.classes.users
 
 

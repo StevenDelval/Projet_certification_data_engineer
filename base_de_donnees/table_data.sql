@@ -1,5 +1,12 @@
+-- Table Localisation
+CREATE TABLE IF NOT EXISTS "Localisation" (
+  "LAMBX" INTEGER,
+  "LAMBY" INTEGER,
+  PRIMARY KEY ("LAMBX", "LAMBY")
+);
+
 -- Table des données météo quotidiennes
-CREATE TABLE IF NOT EXISTS "TableMeteoQuotidien" (
+CREATE TABLE IF NOT EXISTS "Meteo" (
   "DATE" DATE,
   "LAMBX" INTEGER,
   "LAMBY" INTEGER,
@@ -29,16 +36,20 @@ CREATE TABLE IF NOT EXISTS "TableMeteoQuotidien" (
   "WGI_RACINE" REAL,
   "TINF_H" REAL,
   "TSUP_H" REAL,
-  PRIMARY KEY ("DATE", "LAMBX", "LAMBY")
+  PRIMARY KEY ("DATE", "LAMBX", "LAMBY"),
+  FOREIGN KEY ("LAMBX", "LAMBY") REFERENCES "Localisation" ("LAMBX", "LAMBY")
 );
+CREATE INDEX idx_meteo_localisation ON "Meteo"("LAMBX", "LAMBY");
 
 -- Table des points piézométriques
-CREATE TABLE IF NOT EXISTS "TablePiezoInfo" (
+CREATE TABLE IF NOT EXISTS "Info_nappe" (
   "code_bss" VARCHAR(100) PRIMARY KEY,
   "urn_bss" VARCHAR(255),
   "LAMBX" INTEGER,
-  "LAMBY" INTEGER
+  "LAMBY" INTEGER,
+  FOREIGN KEY ("LAMBX", "LAMBY") REFERENCES "Localisation" ("LAMBX", "LAMBY")
 );
+CREATE INDEX idx_piezo_localisation ON "Info_nappe"("LAMBX", "LAMBY");
 
 -- Table des types de mesure
 CREATE TABLE IF NOT EXISTS "Nature_mesure" (
@@ -59,7 +70,7 @@ CREATE TABLE IF NOT EXISTS "Producteur" (
 );
 
 -- Table des mesures piézométriques quotidiennes
-CREATE TABLE IF NOT EXISTS "TablePiezoQuotidien" (
+CREATE TABLE IF NOT EXISTS "Nappe" (
   "code_bss" VARCHAR(100),
   "date_mesure" DATE,
   "code_nature_mesure" VARCHAR(100),
@@ -71,7 +82,7 @@ CREATE TABLE IF NOT EXISTS "TablePiezoQuotidien" (
   "profondeur_nappe" REAL,
   "niveau_nappe_eau" REAL,
   PRIMARY KEY ("code_bss", "date_mesure"),
-  FOREIGN KEY ("code_bss") REFERENCES "TablePiezoInfo" ("code_bss"),
+  FOREIGN KEY ("code_bss") REFERENCES "Info_nappe" ("code_bss"),
   FOREIGN KEY ("code_nature_mesure") REFERENCES "Nature_mesure" ("code_nature_mesure"),
   FOREIGN KEY ("code_continuite") REFERENCES "Continuite" ("code_continuite"),
   FOREIGN KEY ("code_producteur") REFERENCES "Producteur" ("code_producteur")
@@ -105,8 +116,15 @@ CREATE INDEX idx_users_email ON users(email);
 CREATE INDEX idx_users_active ON users(is_active);
 
 
--- Insertion d'exemples dans TablePiezoInfo
-INSERT INTO "TablePiezoInfo" ("code_bss","urn_bss", "LAMBX", "LAMBY")
+-- Insertion d'exemples dans Localisation
+INSERT INTO "Localisation" ("LAMBX", "LAMBY")
+VALUES
+  (6280, 25850),
+  (5640,26650),
+  (5560,26570);
+
+-- Insertion d'exemples dans Info_nappe
+INSERT INTO "Info_nappe" ("code_bss","urn_bss", "LAMBX", "LAMBY")
 VALUES
   ('00263X0129/PZASA4','test', 6280, 25850),
   ('00026X0040/P1','test', 5640,26650),

@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from models import User, TableMeteoQuotidien, TablePiezoInfo, Nature_mesure, Continuite, Producteur, TablePiezoQuotidien
+from models import User, Meteo, Info_nappe, Nature_mesure, Continuite, Producteur, Nappe
 from schemas import UserCreate
 from passlib.context import CryptContext
 from security import get_password_hash
@@ -61,7 +61,7 @@ def get_row_by_primary_keys(db: Session, model, **pk_values):
     return db.query(model).get(tuple(pk_values.values()))
 
 def get_meteo_by_date_coords(db: Session, date, lambx, lamby):
-    return get_row_by_primary_keys(db, TableMeteoQuotidien, DATE=date, LAMBX=lambx, LAMBY=lamby)
+    return get_row_by_primary_keys(db, Meteo, DATE=date, LAMBX=lambx, LAMBY=lamby)
 
 def get_paginated_piezo_data_by_code_bss(
         db: Session,
@@ -73,10 +73,10 @@ def get_paginated_piezo_data_by_code_bss(
         include_nature: bool = False,
         include_producteur: bool = False,
     ):
-    columns = [TablePiezoQuotidien]
+    columns = [Nappe]
 
     if include_info:
-        columns.append(TablePiezoInfo)
+        columns.append(Info_nappe)
     if include_continuite:
         columns.append(Continuite)
     if include_nature:
@@ -84,24 +84,24 @@ def get_paginated_piezo_data_by_code_bss(
     if include_producteur:
         columns.append(Producteur)
 
-    query = db.query(*columns).filter(TablePiezoQuotidien.code_bss == code_bss)
+    query = db.query(*columns).filter(Nappe.code_bss == code_bss)
 
     if include_info:
-        query = query.join(TablePiezoInfo, TablePiezoQuotidien.code_bss == TablePiezoInfo.code_bss)
+        query = query.join(Info_nappe, Nappe.code_bss == Info_nappe.code_bss)
 
     if include_continuite:
-        query = query.outerjoin(Continuite, TablePiezoQuotidien.code_continuite == Continuite.code_continuite)
+        query = query.outerjoin(Continuite, Nappe.code_continuite == Continuite.code_continuite)
 
     if include_nature:
-        query = query.outerjoin(Nature_mesure, TablePiezoQuotidien.code_nature_mesure == Nature_mesure.code_nature_mesure)
+        query = query.outerjoin(Nature_mesure, Nappe.code_nature_mesure == Nature_mesure.code_nature_mesure)
 
     if include_producteur:
-        query = query.outerjoin(Producteur, TablePiezoQuotidien.code_producteur == Producteur.code_producteur)
+        query = query.outerjoin(Producteur, Nappe.code_producteur == Producteur.code_producteur)
 
     total = query.count()
 
     results = (
-        query.order_by(TablePiezoQuotidien.date_mesure.desc())
+        query.order_by(Nappe.date_mesure.desc())
         .offset(offset)
         .limit(limit)
         .all()
@@ -110,31 +110,31 @@ def get_paginated_piezo_data_by_code_bss(
     return total, results
 
 def get_piezo_info_by_code_bss(db: Session, code_bss):
-    return get_row_by_primary_keys(db, TablePiezoInfo, code_bss=code_bss)
+    return get_row_by_primary_keys(db, Info_nappe, code_bss=code_bss)
 
 def get_piezo_and_meteo_by_date_range_for_code_bss(db: Session,code_bss, start_date, end_date):
     return (
         db.query(
-            TablePiezoQuotidien.code_bss,
-            TablePiezoQuotidien.date_mesure,
-            TablePiezoQuotidien.profondeur_nappe,
-            TablePiezoQuotidien.niveau_nappe_eau,
-            TableMeteoQuotidien
+            Nappe.code_bss,
+            Nappe.date_mesure,
+            Nappe.profondeur_nappe,
+            Nappe.niveau_nappe_eau,
+            Meteo
         )
         .join(
-            TablePiezoInfo,
-            TablePiezoQuotidien.code_bss == TablePiezoInfo.code_bss
+            Info_nappe,
+            Nappe.code_bss == Info_nappe.code_bss
         )
         .join(
-            TableMeteoQuotidien,
-            (TablePiezoInfo.LAMBX == TableMeteoQuotidien.LAMBX) &
-            (TablePiezoInfo.LAMBY == TableMeteoQuotidien.LAMBY) &
-            (TablePiezoQuotidien.date_mesure == TableMeteoQuotidien.DATE)
+            Meteo,
+            (Info_nappe.LAMBX == Meteo.LAMBX) &
+            (Info_nappe.LAMBY == Meteo.LAMBY) &
+            (Nappe.date_mesure == Meteo.DATE)
         )
         .filter(
-            TablePiezoQuotidien.date_mesure.between(start_date, end_date)
+            Nappe.date_mesure.between(start_date, end_date)
         )
-        .filter(TablePiezoQuotidien.code_bss == code_bss)
+        .filter(Nappe.code_bss == code_bss)
         .all()
     )
 

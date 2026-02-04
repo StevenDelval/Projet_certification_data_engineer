@@ -2,7 +2,7 @@
 erDiagram
     direction LR
     
-    TableMeteoQuotidien {
+    Meteo {
         DATE str pk
         LAMBX int pk
         LAMBY int pk
@@ -33,7 +33,7 @@ erDiagram
         TSUP_H_Q float
     }
 
-    TablePiezoQuotidien {
+    Nappe {
         code_bss str pk,fk
         date_mesure str pk
         code_nature_mesure str fk
@@ -58,16 +58,16 @@ erDiagram
         nom_producteur str
     }
 
-    TablePiezoInfo {
+    Info_nappe {
         code_bss str pk
         LAMBX int fk
         LAMBY int fk
         urn_bss str
     }
 
-    TableMeteoQuotidien many to many TablePiezoInfo : "associe"
-    TablePiezoInfo 1 to many TablePiezoQuotidien : "enregistre"
-    TablePiezoQuotidien many to 1 Nature_mesure : "possède"
-    TablePiezoQuotidien many to 1 Continuite : "possède"
-    TablePiezoQuotidien many to 1 Producteur : "produit par"
+    Meteo many to many Info_nappe : "associe"
+    Info_nappe 1 to many Nappe : "enregistre"
+    Nappe many to 1 Nature_mesure : "possède"
+    Nappe many to 1 Continuite : "possède"
+    Nappe many to 1 Producteur : "produit par"
 ```

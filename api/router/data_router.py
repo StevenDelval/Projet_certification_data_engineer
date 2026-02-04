@@ -55,7 +55,7 @@ def read_piezo_value(
 
     results = []
     for row in rows:
-        piezo = row[0] if not isinstance(row, models.TablePiezoQuotidien) else row
+        piezo = row[0] if not isinstance(row, models.Nappe) else row
 
         info = continuite = nature = producteur = None
         idx = 1
