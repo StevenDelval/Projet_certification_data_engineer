@@ -120,3 +120,32 @@ class PiezoPaginatedResponse(BaseModel):
     limit: int
     offset: int
     results: List[PiezoDataOut]        
+
+class PiezoListResponse(BaseModel):
+    total: int
+    limit: int
+    offset: int
+    results: List[PiezoInfoOut]
+
+# Pour les données piézo + météo
+class PiezoMeteoRequest(BaseModel):
+    code_bss: str
+    start_date: date
+    end_date: date
+
+class PiezoMeteoData(BaseModel):
+    code_bss: str
+    date_mesure: date
+    profondeur_nappe: Optional[float] = None
+    niveau_nappe_eau: Optional[float] = None
+    meteo: MeteoDataOut
+    
+    class Config:
+        from_attributes = True
+
+class PiezoMeteoResponse(BaseModel):
+    code_bss: str
+    start_date: date
+    end_date: date
+    count: int
+    data: List[PiezoMeteoData]
