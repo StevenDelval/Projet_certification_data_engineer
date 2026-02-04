@@ -145,7 +145,7 @@ secret_key = "votre_secret_key_jwt_tres_longue_et_securisee"
 algorithm  = "HS256"
 
 # Configuration Data Factory
-git_pipeline_qualite_eau_repo_url = "https://github.com/VOTRE_USERNAME/pipeline_qualite_eau.git"
+git_pipeline_qualite_eau_repo_url = "https://github.com/StevenDelval/pipeline_qualite_eau.git"
 
 # Notifications
 users_notification = ["votre.email@example.com"]
