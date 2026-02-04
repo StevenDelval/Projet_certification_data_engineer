@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from models import User, Meteo, Info_nappe, Nature_mesure, Continuite, Producteur, Nappe
+from models import User, Meteo, Info_nappe, Nature_mesure, Continuite, Producteur, Nappe, Localisation
 from schemas import UserCreate
 from passlib.context import CryptContext
 from security import get_password_hash
@@ -112,6 +112,9 @@ def get_paginated_piezo_data_by_code_bss(
 def get_piezo_info_by_code_bss(db: Session, code_bss):
     return get_row_by_primary_keys(db, Info_nappe, code_bss=code_bss)
 
+def get_all_piezo(db: Session):
+    return db.query(Info_nappe)
+
 def get_piezo_and_meteo_by_date_range_for_code_bss(db: Session,code_bss, start_date, end_date):
     return (
         db.query(
@@ -126,9 +129,14 @@ def get_piezo_and_meteo_by_date_range_for_code_bss(db: Session,code_bss, start_d
             Nappe.code_bss == Info_nappe.code_bss
         )
         .join(
+            Localisation,
+            (Info_nappe.LAMBX == Localisation.LAMBX )&
+            (Info_nappe.LAMBY == Localisation.LAMBY)
+        )
+        .join(
             Meteo,
-            (Info_nappe.LAMBX == Meteo.LAMBX) &
-            (Info_nappe.LAMBY == Meteo.LAMBY) &
+            (Localisation.LAMBX == Meteo.LAMBX) &
+            (Localisation.LAMBY == Meteo.LAMBY) &
             (Nappe.date_mesure == Meteo.DATE)
         )
         .filter(
