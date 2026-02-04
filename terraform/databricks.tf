@@ -47,7 +47,7 @@
 # }
 
 # resource "databricks_repo" "git_repo" {
-#   url    = var.git_repo_url
+#   url    = var.git_pipeline_qualite_eau_repo_url
 #   path   = "/Repos/repo_git/qualite_eaux"
 #   branch = "develop"
 # }

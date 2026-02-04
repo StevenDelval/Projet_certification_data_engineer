@@ -63,18 +63,18 @@ resource "azurerm_data_factory_linked_custom_service" "postgres_ls" {
 JSON
 }
 
-resource "azurerm_data_factory_linked_custom_service" "postgres_ls_city" {
-  name            = "AzurePostgreSql_get_city_data"
-  data_factory_id = azurerm_data_factory.data_factory.id
+# resource "azurerm_data_factory_linked_custom_service" "postgres_ls_city" {
+#   name            = "AzurePostgreSql_get_city_data"
+#   data_factory_id = azurerm_data_factory.data_factory.id
 
-  type = "AzurePostgreSql"
+#   type = "AzurePostgreSql"
 
-  type_properties_json = <<JSON
-{
-  "connectionString":"host=${var.city_db_fqdm};port=5432;database=${var.city_db_name};uid=${var.city_db_user};encryptionmethod=1;validateservercertificate=1;password=${var.city_db_pwd}"
-}
-JSON
-}
+#   type_properties_json = <<JSON
+# {
+#   "connectionString":"host=${var.city_db_fqdm};port=5432;database=${var.city_db_name};uid=${var.city_db_user};encryptionmethod=1;validateservercertificate=1;password=${var.city_db_pwd}"
+# }
+# JSON
+# }
 
 resource "azurerm_data_factory_custom_dataset" "table_meteo_quotidien" {
   name            = "Meteo"
@@ -541,17 +541,17 @@ resource "azurerm_data_factory_dataset_parquet" "parquet_file_piezo" {
   compression_codec = "snappy"
 }
 
-resource "azurerm_data_factory_dataset_parquet" "parquet_data_city" {
-  name                = "parquet_data_city"
-  data_factory_id     = azurerm_data_factory.data_factory.id
-  linked_service_name = azurerm_data_factory_linked_service_data_lake_storage_gen2.datalake_ls.name
-  folder = "ParquetFiles"
+# resource "azurerm_data_factory_dataset_parquet" "parquet_data_city" {
+#   name                = "parquet_data_city"
+#   data_factory_id     = azurerm_data_factory.data_factory.id
+#   linked_service_name = azurerm_data_factory_linked_service_data_lake_storage_gen2.datalake_ls.name
+#   folder = "ParquetFiles"
 
-  azure_blob_fs_location {
-    file_system = "donnees-ville"
-  }
-  compression_codec = "snappy"
-}
+#   azure_blob_fs_location {
+#     file_system = "donnees-ville"
+#   }
+#   compression_codec = "snappy"
+# }
 
 
 resource "azurerm_data_factory_pipeline" "pipeline_get_csv" {
@@ -1256,372 +1256,372 @@ resource "azurerm_data_factory_trigger_schedule" "trigger_schedule_db" {
   }
 }
 
-resource "azurerm_data_factory_custom_dataset" "table_city" {
-  name            = "AzurePostgreSqlTableCity"
-  data_factory_id = azurerm_data_factory.data_factory.id
-  type            = "AzurePostgreSqlTable"
-  folder = "PostgresTables"
+# resource "azurerm_data_factory_custom_dataset" "table_city" {
+#   name            = "AzurePostgreSqlTableCity"
+#   data_factory_id = azurerm_data_factory.data_factory.id
+#   type            = "AzurePostgreSqlTable"
+#   folder = "PostgresTables"
 
-  linked_service {
-    name = azurerm_data_factory_linked_custom_service.postgres_ls_city.name
+#   linked_service {
+#     name = azurerm_data_factory_linked_custom_service.postgres_ls_city.name
 
-  }
-  type_properties_json = <<JSON
-   {
-        "schema": "public",
-        "table": "communes_france_2025"
-    }
-  JSON
-  schema_json = <<JSON
-  [
-            {
-                "name": "Unnamed: 0",
-                "type": "bigint",
-                "precision": 0,
-                "scale": 0
-            },
-            {
-                "name": "code_insee",
-                "type": "text",
-                "precision": 0,
-                "scale": 0
-            },
-            {
-                "name": "nom_standard",
-                "type": "text",
-                "precision": 0,
-                "scale": 0
-            },
-            {
-                "name": "nom_sans_pronom",
-                "type": "text",
-                "precision": 0,
-                "scale": 0
-            },
-            {
-                "name": "nom_a",
-                "type": "text",
-                "precision": 0,
-                "scale": 0
-            },
-            {
-                "name": "nom_de",
-                "type": "text",
-                "precision": 0,
-                "scale": 0
-            },
-            {
-                "name": "nom_sans_accent",
-                "type": "text",
-                "precision": 0,
-                "scale": 0
-            },
-            {
-                "name": "nom_standard_majuscule",
-                "type": "text",
-                "precision": 0,
-                "scale": 0
-            },
-            {
-                "name": "typecom",
-                "type": "text",
-                "precision": 0,
-                "scale": 0
-            },
-            {
-                "name": "typecom_texte",
-                "type": "text",
-                "precision": 0,
-                "scale": 0
-            },
-            {
-                "name": "reg_code",
-                "type": "bigint",
-                "precision": 0,
-                "scale": 0
-            },
-            {
-                "name": "reg_nom",
-                "type": "text",
-                "precision": 0,
-                "scale": 0
-            },
-            {
-                "name": "dep_code",
-                "type": "text",
-                "precision": 0,
-                "scale": 0
-            },
-            {
-                "name": "dep_nom",
-                "type": "text",
-                "precision": 0,
-                "scale": 0
-            },
-            {
-                "name": "canton_code",
-                "type": "text",
-                "precision": 0,
-                "scale": 0
-            },
-            {
-                "name": "canton_nom",
-                "type": "text",
-                "precision": 0,
-                "scale": 0
-            },
-            {
-                "name": "epci_code",
-                "type": "text",
-                "precision": 0,
-                "scale": 0
-            },
-            {
-                "name": "epci_nom",
-                "type": "text",
-                "precision": 0,
-                "scale": 0
-            },
-            {
-                "name": "academie_code",
-                "type": "bigint",
-                "precision": 0,
-                "scale": 0
-            },
-            {
-                "name": "academie_nom",
-                "type": "text",
-                "precision": 0,
-                "scale": 0
-            },
-            {
-                "name": "code_postal",
-                "type": "double precision",
-                "precision": 0,
-                "scale": 0
-            },
-            {
-                "name": "codes_postaux",
-                "type": "text",
-                "precision": 0,
-                "scale": 0
-            },
-            {
-                "name": "zone_emploi",
-                "type": "double precision",
-                "precision": 0,
-                "scale": 0
-            },
-            {
-                "name": "code_insee_centre_zone_emploi",
-                "type": "text",
-                "precision": 0,
-                "scale": 0
-            },
-            {
-                "name": "code_unite_urbaine",
-                "type": "text",
-                "precision": 0,
-                "scale": 0
-            },
-            {
-                "name": "nom_unite_urbaine",
-                "type": "text",
-                "precision": 0,
-                "scale": 0
-            },
-            {
-                "name": "taille_unite_urbaine",
-                "type": "double precision",
-                "precision": 0,
-                "scale": 0
-            },
-            {
-                "name": "type_commune_unite_urbaine",
-                "type": "text",
-                "precision": 0,
-                "scale": 0
-            },
-            {
-                "name": "statut_commune_unite_urbaine",
-                "type": "text",
-                "precision": 0,
-                "scale": 0
-            },
-            {
-                "name": "population",
-                "type": "bigint",
-                "precision": 0,
-                "scale": 0
-            },
-            {
-                "name": "superficie_hectare",
-                "type": "bigint",
-                "precision": 0,
-                "scale": 0
-            },
-            {
-                "name": "superficie_km2",
-                "type": "bigint",
-                "precision": 0,
-                "scale": 0
-            },
-            {
-                "name": "densite",
-                "type": "double precision",
-                "precision": 0,
-                "scale": 0
-            },
-            {
-                "name": "altitude_moyenne",
-                "type": "bigint",
-                "precision": 0,
-                "scale": 0
-            },
-            {
-                "name": "altitude_minimale",
-                "type": "double precision",
-                "precision": 0,
-                "scale": 0
-            },
-            {
-                "name": "altitude_maximale",
-                "type": "double precision",
-                "precision": 0,
-                "scale": 0
-            },
-            {
-                "name": "latitude_mairie",
-                "type": "double precision",
-                "precision": 0,
-                "scale": 0
-            },
-            {
-                "name": "longitude_mairie",
-                "type": "double precision",
-                "precision": 0,
-                "scale": 0
-            },
-            {
-                "name": "latitude_centre",
-                "type": "double precision",
-                "precision": 0,
-                "scale": 0
-            },
-            {
-                "name": "longitude_centre",
-                "type": "double precision",
-                "precision": 0,
-                "scale": 0
-            },
-            {
-                "name": "grille_densite",
-                "type": "bigint",
-                "precision": 0,
-                "scale": 0
-            },
-            {
-                "name": "grille_densite_texte",
-                "type": "text",
-                "precision": 0,
-                "scale": 0
-            },
-            {
-                "name": "niveau_equipements_services",
-                "type": "double precision",
-                "precision": 0,
-                "scale": 0
-            },
-            {
-                "name": "niveau_equipements_services_texte",
-                "type": "text",
-                "precision": 0,
-                "scale": 0
-            },
-            {
-                "name": "gentile",
-                "type": "text",
-                "precision": 0,
-                "scale": 0
-            },
-            {
-                "name": "url_wikipedia",
-                "type": "text",
-                "precision": 0,
-                "scale": 0
-            },
-            {
-                "name": "url_villedereve",
-                "type": "text",
-                "precision": 0,
-                "scale": 0
-            }
-        ]
+#   }
+#   type_properties_json = <<JSON
+#    {
+#         "schema": "public",
+#         "table": "communes_france_2025"
+#     }
+#   JSON
+#   schema_json = <<JSON
+#   [
+#             {
+#                 "name": "Unnamed: 0",
+#                 "type": "bigint",
+#                 "precision": 0,
+#                 "scale": 0
+#             },
+#             {
+#                 "name": "code_insee",
+#                 "type": "text",
+#                 "precision": 0,
+#                 "scale": 0
+#             },
+#             {
+#                 "name": "nom_standard",
+#                 "type": "text",
+#                 "precision": 0,
+#                 "scale": 0
+#             },
+#             {
+#                 "name": "nom_sans_pronom",
+#                 "type": "text",
+#                 "precision": 0,
+#                 "scale": 0
+#             },
+#             {
+#                 "name": "nom_a",
+#                 "type": "text",
+#                 "precision": 0,
+#                 "scale": 0
+#             },
+#             {
+#                 "name": "nom_de",
+#                 "type": "text",
+#                 "precision": 0,
+#                 "scale": 0
+#             },
+#             {
+#                 "name": "nom_sans_accent",
+#                 "type": "text",
+#                 "precision": 0,
+#                 "scale": 0
+#             },
+#             {
+#                 "name": "nom_standard_majuscule",
+#                 "type": "text",
+#                 "precision": 0,
+#                 "scale": 0
+#             },
+#             {
+#                 "name": "typecom",
+#                 "type": "text",
+#                 "precision": 0,
+#                 "scale": 0
+#             },
+#             {
+#                 "name": "typecom_texte",
+#                 "type": "text",
+#                 "precision": 0,
+#                 "scale": 0
+#             },
+#             {
+#                 "name": "reg_code",
+#                 "type": "bigint",
+#                 "precision": 0,
+#                 "scale": 0
+#             },
+#             {
+#                 "name": "reg_nom",
+#                 "type": "text",
+#                 "precision": 0,
+#                 "scale": 0
+#             },
+#             {
+#                 "name": "dep_code",
+#                 "type": "text",
+#                 "precision": 0,
+#                 "scale": 0
+#             },
+#             {
+#                 "name": "dep_nom",
+#                 "type": "text",
+#                 "precision": 0,
+#                 "scale": 0
+#             },
+#             {
+#                 "name": "canton_code",
+#                 "type": "text",
+#                 "precision": 0,
+#                 "scale": 0
+#             },
+#             {
+#                 "name": "canton_nom",
+#                 "type": "text",
+#                 "precision": 0,
+#                 "scale": 0
+#             },
+#             {
+#                 "name": "epci_code",
+#                 "type": "text",
+#                 "precision": 0,
+#                 "scale": 0
+#             },
+#             {
+#                 "name": "epci_nom",
+#                 "type": "text",
+#                 "precision": 0,
+#                 "scale": 0
+#             },
+#             {
+#                 "name": "academie_code",
+#                 "type": "bigint",
+#                 "precision": 0,
+#                 "scale": 0
+#             },
+#             {
+#                 "name": "academie_nom",
+#                 "type": "text",
+#                 "precision": 0,
+#                 "scale": 0
+#             },
+#             {
+#                 "name": "code_postal",
+#                 "type": "double precision",
+#                 "precision": 0,
+#                 "scale": 0
+#             },
+#             {
+#                 "name": "codes_postaux",
+#                 "type": "text",
+#                 "precision": 0,
+#                 "scale": 0
+#             },
+#             {
+#                 "name": "zone_emploi",
+#                 "type": "double precision",
+#                 "precision": 0,
+#                 "scale": 0
+#             },
+#             {
+#                 "name": "code_insee_centre_zone_emploi",
+#                 "type": "text",
+#                 "precision": 0,
+#                 "scale": 0
+#             },
+#             {
+#                 "name": "code_unite_urbaine",
+#                 "type": "text",
+#                 "precision": 0,
+#                 "scale": 0
+#             },
+#             {
+#                 "name": "nom_unite_urbaine",
+#                 "type": "text",
+#                 "precision": 0,
+#                 "scale": 0
+#             },
+#             {
+#                 "name": "taille_unite_urbaine",
+#                 "type": "double precision",
+#                 "precision": 0,
+#                 "scale": 0
+#             },
+#             {
+#                 "name": "type_commune_unite_urbaine",
+#                 "type": "text",
+#                 "precision": 0,
+#                 "scale": 0
+#             },
+#             {
+#                 "name": "statut_commune_unite_urbaine",
+#                 "type": "text",
+#                 "precision": 0,
+#                 "scale": 0
+#             },
+#             {
+#                 "name": "population",
+#                 "type": "bigint",
+#                 "precision": 0,
+#                 "scale": 0
+#             },
+#             {
+#                 "name": "superficie_hectare",
+#                 "type": "bigint",
+#                 "precision": 0,
+#                 "scale": 0
+#             },
+#             {
+#                 "name": "superficie_km2",
+#                 "type": "bigint",
+#                 "precision": 0,
+#                 "scale": 0
+#             },
+#             {
+#                 "name": "densite",
+#                 "type": "double precision",
+#                 "precision": 0,
+#                 "scale": 0
+#             },
+#             {
+#                 "name": "altitude_moyenne",
+#                 "type": "bigint",
+#                 "precision": 0,
+#                 "scale": 0
+#             },
+#             {
+#                 "name": "altitude_minimale",
+#                 "type": "double precision",
+#                 "precision": 0,
+#                 "scale": 0
+#             },
+#             {
+#                 "name": "altitude_maximale",
+#                 "type": "double precision",
+#                 "precision": 0,
+#                 "scale": 0
+#             },
+#             {
+#                 "name": "latitude_mairie",
+#                 "type": "double precision",
+#                 "precision": 0,
+#                 "scale": 0
+#             },
+#             {
+#                 "name": "longitude_mairie",
+#                 "type": "double precision",
+#                 "precision": 0,
+#                 "scale": 0
+#             },
+#             {
+#                 "name": "latitude_centre",
+#                 "type": "double precision",
+#                 "precision": 0,
+#                 "scale": 0
+#             },
+#             {
+#                 "name": "longitude_centre",
+#                 "type": "double precision",
+#                 "precision": 0,
+#                 "scale": 0
+#             },
+#             {
+#                 "name": "grille_densite",
+#                 "type": "bigint",
+#                 "precision": 0,
+#                 "scale": 0
+#             },
+#             {
+#                 "name": "grille_densite_texte",
+#                 "type": "text",
+#                 "precision": 0,
+#                 "scale": 0
+#             },
+#             {
+#                 "name": "niveau_equipements_services",
+#                 "type": "double precision",
+#                 "precision": 0,
+#                 "scale": 0
+#             },
+#             {
+#                 "name": "niveau_equipements_services_texte",
+#                 "type": "text",
+#                 "precision": 0,
+#                 "scale": 0
+#             },
+#             {
+#                 "name": "gentile",
+#                 "type": "text",
+#                 "precision": 0,
+#                 "scale": 0
+#             },
+#             {
+#                 "name": "url_wikipedia",
+#                 "type": "text",
+#                 "precision": 0,
+#                 "scale": 0
+#             },
+#             {
+#                 "name": "url_villedereve",
+#                 "type": "text",
+#                 "precision": 0,
+#                 "scale": 0
+#             }
+#         ]
 
-  JSON
-}
+#   JSON
+# }
 
-resource "azurerm_data_factory_pipeline" "pipeline_get_db" {
-  name            = "pipeline_get_db"
-  data_factory_id = azurerm_data_factory.data_factory.id
-  folder = "Extration"
-  activities_json = <<JSON
-  [
-            {
-                "name": "Copy city data from db to dl",
-                "type": "Copy",
-                "dependsOn": [],
-                "policy": {
-                    "timeout": "0.12:00:00",
-                    "retry": 0,
-                    "retryIntervalInSeconds": 30,
-                    "secureOutput": false,
-                    "secureInput": false
-                },
-                "userProperties": [],
-                "typeProperties": {
-                    "source": {
-                        "type": "AzurePostgreSqlSource",
-                        "query": "SELECT code_insee,\nnom_standard,\nnom_sans_pronom,\nreg_code,\nreg_nom,\ndep_code,\ndep_nom,\ncanton_code,\ncanton_nom,\ncode_postal,\npopulation,\nsuperficie_hectare,\nsuperficie_km2,\ndensite,\naltitude_moyenne,\naltitude_minimale,\naltitude_maximale,\nlatitude_mairie,\nlongitude_mairie,\nlatitude_centre,\nlongitude_centre\nFROM communes_france_2025",
-                        "partitionOption": "None",
-                        "queryTimeout": "02:00:00"
-                    },
-                    "sink": {
-                        "type": "ParquetSink",
-                        "storeSettings": {
-                            "type": "AzureBlobFSWriteSettings",
-                            "copyBehavior": "MergeFiles"
-                        },
-                        "formatSettings": {
-                            "type": "ParquetWriteSettings"
-                        }
-                    },
-                    "enableStaging": false,
-                    "translator": {
-                        "type": "TabularTranslator",
-                        "typeConversion": true,
-                        "typeConversionSettings": {
-                            "allowDataTruncation": true,
-                            "treatBooleanAsNumber": false
-                        }
-                    }
-                },
-                "inputs": [
-                    {
-                        "referenceName": "${azurerm_data_factory_custom_dataset.table_city.name}",
-                        "type": "DatasetReference"
-                    }
-                ],
-                "outputs": [
-                    {
-                        "referenceName": "${azurerm_data_factory_dataset_parquet.parquet_data_city.name}",
-                        "type": "DatasetReference"
-                    }
-                ]
-            }
-        ]
-  JSON
-}
+# resource "azurerm_data_factory_pipeline" "pipeline_get_db" {
+#   name            = "pipeline_get_db"
+#   data_factory_id = azurerm_data_factory.data_factory.id
+#   folder = "Extration"
+#   activities_json = <<JSON
+#   [
+#             {
+#                 "name": "Copy city data from db to dl",
+#                 "type": "Copy",
+#                 "dependsOn": [],
+#                 "policy": {
+#                     "timeout": "0.12:00:00",
+#                     "retry": 0,
+#                     "retryIntervalInSeconds": 30,
+#                     "secureOutput": false,
+#                     "secureInput": false
+#                 },
+#                 "userProperties": [],
+#                 "typeProperties": {
+#                     "source": {
+#                         "type": "AzurePostgreSqlSource",
+#                         "query": "SELECT code_insee,\nnom_standard,\nnom_sans_pronom,\nreg_code,\nreg_nom,\ndep_code,\ndep_nom,\ncanton_code,\ncanton_nom,\ncode_postal,\npopulation,\nsuperficie_hectare,\nsuperficie_km2,\ndensite,\naltitude_moyenne,\naltitude_minimale,\naltitude_maximale,\nlatitude_mairie,\nlongitude_mairie,\nlatitude_centre,\nlongitude_centre\nFROM communes_france_2025",
+#                         "partitionOption": "None",
+#                         "queryTimeout": "02:00:00"
+#                     },
+#                     "sink": {
+#                         "type": "ParquetSink",
+#                         "storeSettings": {
+#                             "type": "AzureBlobFSWriteSettings",
+#                             "copyBehavior": "MergeFiles"
+#                         },
+#                         "formatSettings": {
+#                             "type": "ParquetWriteSettings"
+#                         }
+#                     },
+#                     "enableStaging": false,
+#                     "translator": {
+#                         "type": "TabularTranslator",
+#                         "typeConversion": true,
+#                         "typeConversionSettings": {
+#                             "allowDataTruncation": true,
+#                             "treatBooleanAsNumber": false
+#                         }
+#                     }
+#                 },
+#                 "inputs": [
+#                     {
+#                         "referenceName": "${azurerm_data_factory_custom_dataset.table_city.name}",
+#                         "type": "DatasetReference"
+#                     }
+#                 ],
+#                 "outputs": [
+#                     {
+#                         "referenceName": "${azurerm_data_factory_dataset_parquet.parquet_data_city.name}",
+#                         "type": "DatasetReference"
+#                     }
+#                 ]
+#             }
+#         ]
+#   JSON
+# }
 
 resource "azurerm_data_factory_trigger_schedule" "trigger_schedule_rgpd" {
   name            = "trigger_schedule_rgpd"

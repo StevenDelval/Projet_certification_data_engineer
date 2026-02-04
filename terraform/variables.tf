@@ -65,16 +65,13 @@ variable "algorithm" {
   sensitive   = true
 }
 
-variable "git_repo_url" {
+variable "git_pipeline_qualite_eau_repo_url" {
   type        = string
   description = "URL of the Git repository containing Databricks notebooks"
   default = "https://github.com/StevenDelval/pipeline_qualite_eau.git"
 }
 
-variable "path_geojson" {
-  type        = string
-  description = "Path to the GeoJSON file for UDI geometry"
-}
+
 
 variable "users_notification" {
   type    = list(string)
