@@ -1,0 +1,8 @@
+La commande suivante est utilisée pour créer une nouvelle Azure Function en ligne de commande avec l'outil Azure Functions Core Tools :
+    func new --name collecte_api_hubeau_data --template "Http Trigger" --authlevel "function"
+
+La commande suivante est utilisée pour démarrer une Azure Function en mode local avec l'outil Azure Functions Core Tools :
+    func start
+
+La commande suivante est utilisée pour déployer une Azure Function sur Azure à partir de ton projet local :
+    func azure functionapp publish get-weather-data-projet-sd
