@@ -1,6 +1,6 @@
 # Compte de stockage pour stocker les fonctions
 resource "azurerm_storage_account" "function_code_blob" {
-  name                     = "functionsprojetsd"
+  name                     = "azsfunctionsprojetsd"
   resource_group_name      = azurerm_resource_group.resource_group.name
   location                 = azurerm_resource_group.resource_group.location
   account_tier             = "Standard"
@@ -17,8 +17,8 @@ resource "azurerm_storage_container" "function_code_container" {
 module "azure_functions_weather_data"{
     source = "./modules/azure_functions"
 
-    service_plan_func_name = "sp-weather-func-sd"
-    function_name = "get-weather-data-projet-sd"
+    service_plan_func_name = "azs-sp-weather-func-sd"
+    function_name = "azs-get-weather-data-projet-sd"
     endpoint = "collecte_csv_weather_data"
     
     resource_group_location = azurerm_resource_group.resource_group.location
@@ -46,8 +46,8 @@ module "azure_functions_weather_data"{
 module "azure_functions_api" {
     source = "./modules/azure_functions"
 
-    service_plan_func_name = "sp-api-hubeau-func-sd"
-    function_name = "get-hubeau-api-data-projet-sd"
+    service_plan_func_name = "azs-sp-api-hubeau-func-sd"
+    function_name = "azs-get-hubeau-api-data-projet-sd"
     endpoint = "collecte_api_hubeau_data"
     
     resource_group_location = azurerm_resource_group.resource_group.location

@@ -27,13 +27,13 @@ resource "null_resource" "docker_push" {
 
 
 resource "azurerm_container_group" "container_group" {
-  name                = "api-sd-projet-certif"
+  name                = "api-sd-projet"
   resource_group_name = azurerm_resource_group.resource_group.name
   location            = azurerm_resource_group.resource_group.location
   ip_address_type     = "Public"
   os_type             = "Linux"
   restart_policy      = "Never"
-  dns_name_label      = "aci-projet-certif"
+  dns_name_label      = "aci-sd-projet"
 
   image_registry_credential{
     server = azurerm_container_registry.acr.login_server

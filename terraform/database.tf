@@ -75,6 +75,12 @@ resource "azurerm_postgresql_flexible_server_database" "db_data" {
   collation = "en_US.utf8"
   charset   = "UTF8"
 }
+# resource "azurerm_postgresql_flexible_server_database" "db_data_city" {
+#   name      = "databaseDataCity"
+#   server_id = azurerm_postgresql_flexible_server.postgres_server.id
+#   collation = "en_US.utf8"
+#   charset   = "UTF8"
+# }
 
 resource "null_resource" "create_table" {
   provisioner "local-exec" {
