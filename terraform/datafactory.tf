@@ -76,7 +76,7 @@ JSON
 # JSON
 # }
 
-resource "azurerm_data_factory_custom_dataset" "table_meteo_quotidien" {
+resource "azurerm_data_factory_custom_dataset" "table_meteouotidien" {
   name            = "Meteo"
   data_factory_id = azurerm_data_factory.data_factory.id
   type            = "AzurePostgreSqlTable"
@@ -274,7 +274,43 @@ resource "azurerm_data_factory_custom_dataset" "table_meteo_quotidien" {
 
 }
 
-resource "azurerm_data_factory_custom_dataset" "table_piezo_quotidien" {
+resource "azurerm_data_factory_custom_dataset" "table_meteo_localisation" {
+  name            = "Localisation"
+  data_factory_id = azurerm_data_factory.data_factory.id
+  type            = "AzurePostgreSqlTable"
+  folder = "PostgresTables"
+
+  linked_service {
+    name = azurerm_data_factory_linked_custom_service.postgres_ls.name
+
+  }
+
+  type_properties_json = <<JSON
+   {
+        "schema": "public",
+        "table": "Localisation"
+    }
+  JSON
+  schema_json          = <<JSON
+   [
+        {
+            "name": "LAMBX",
+            "type": "bigint",
+            "precision": 0,
+            "scale": 0
+        },
+        {
+            "name": "LAMBY",
+            "type": "bigint",
+            "precision": 0,
+            "scale": 0
+        }
+    ]
+  JSON
+
+}
+
+resource "azurerm_data_factory_custom_dataset" "table_piezouotidien" {
   name            = "Nappe"
   data_factory_id = azurerm_data_factory.data_factory.id
   type            = "AzurePostgreSqlTable"
@@ -783,7 +819,7 @@ resource "azurerm_data_factory_data_flow" "copy_data_weather" {
     name = "postgreMeteo"
 
     dataset {
-      name = azurerm_data_factory_custom_dataset.table_meteo_quotidien.name
+      name = azurerm_data_factory_custom_dataset.table_meteouotidien.name
     }
   }
 
@@ -793,31 +829,31 @@ resource "azurerm_data_factory_data_flow" "copy_data_weather" {
             LAMBX as long,
             LAMBY as long,
             DATE as string,
-            PRENEI_Q as double,
-            PRELIQ_Q as double,
-            T_Q as double,
-            FF_Q as double,
-            Q_Q as double,
-            DLI_Q as double,
-            SSI_Q as double,
-            HU_Q as double,
-            EVAP_Q as double,
-            ETP_Q as double,
-            PE_Q as double,
-            SWI_Q as double,
-            DRAINC_Q as double,
-            RUNC_Q as double,
-            RESR_NEIGE_Q as double,
-            RESR_NEIGE6_Q as double,
-            HTEURNEIGE_Q as double,
-            HTEURNEIGE6_Q as double,
-            HTEURNEIGEX_Q as double,
-            SNOW_FRAC_Q as double,
-            ECOULEMENT_Q as double,
-            WG_RACINE_Q as double,
-            WGI_RACINE_Q as double,
-            TINF_H_Q as double,
-            TSUP_H_Q as double
+            PRENEI as double,
+            PRELIQ as double,
+            T as double,
+            FF as double,
+            Q as double,
+            DLI as double,
+            SSI as double,
+            HU as double,
+            EVAP as double,
+            ETP as double,
+            PE as double,
+            SWI as double,
+            DRAINC as double,
+            RUNC as double,
+            RESR_NEIGE as double,
+            RESR_NEIGE6 as double,
+            HTEURNEIGE as double,
+            HTEURNEIGE6 as double,
+            HTEURNEIGEX as double,
+            SNOW_FRAC as double,
+            ECOULEMENT as double,
+            WG_RACINE as double,
+            WGI_RACINE as double,
+            TINF_H as double,
+            TSUP_H as double
         ),
     allowSchemaDrift: true,
     validateSchema: false,
@@ -832,31 +868,31 @@ resource "azurerm_data_factory_data_flow" "copy_data_weather" {
             LAMBX as long,
             LAMBY as long,
             DATE as string,
-            PRENEI_Q as double,
-            PRELIQ_Q as double,
-            T_Q as double,
-            FF_Q as double,
-            Q_Q as double,
-            DLI_Q as double,
-            SSI_Q as double,
-            HU_Q as double,
-            EVAP_Q as double,
-            ETP_Q as double,
-            PE_Q as double,
-            SWI_Q as double,
-            DRAINC_Q as double,
-            RUNC_Q as double,
-            RESR_NEIGE_Q as double,
-            RESR_NEIGE6_Q as double,
-            HTEURNEIGE_Q as double,
-            HTEURNEIGE6_Q as double,
-            HTEURNEIGEX_Q as double,
-            SNOW_FRAC_Q as double,
-            ECOULEMENT_Q as double,
-            WG_RACINE_Q as double,
-            WGI_RACINE_Q as double,
-            TINF_H_Q as double,
-            TSUP_H_Q as double
+            PRENEI as double,
+            PRELIQ as double,
+            T as double,
+            FF as double,
+            Q as double,
+            DLI as double,
+            SSI as double,
+            HU as double,
+            EVAP as double,
+            ETP as double,
+            PE as double,
+            SWI as double,
+            DRAINC as double,
+            RUNC as double,
+            RESR_NEIGE as double,
+            RESR_NEIGE6 as double,
+            HTEURNEIGE as double,
+            HTEURNEIGE6 as double,
+            HTEURNEIGEX as double,
+            SNOW_FRAC as double,
+            ECOULEMENT as double,
+            WG_RACINE as double,
+            WGI_RACINE as double,
+            TINF_H as double,
+            TSUP_H as double
         ),
     deletable: false,
     insertable: true,
@@ -867,6 +903,94 @@ resource "azurerm_data_factory_data_flow" "copy_data_weather" {
     skipDuplicateMapInputs: true,
     skipDuplicateMapOutputs: true
     ) ~> postgreMeteo
+  EOT
+}
+resource "azurerm_data_factory_data_flow" "copy_data_localisation" {
+  name            = "copy_data_localisation"
+  data_factory_id = azurerm_data_factory.data_factory.id
+
+  source {
+    name = "sourceparquetdataweather"
+
+
+    dataset {
+      name = azurerm_data_factory_dataset_parquet.parquet_data_weather.name
+    }
+  }
+
+  sink {
+    name = "postgreLocalisation"
+
+    dataset {
+      name = azurerm_data_factory_custom_dataset.table_meteo_localisation.name
+    }
+  }
+
+  script = <<EOT
+    source(
+        output(
+            LAMBX as long,
+            LAMBY as long,
+            DATE as string,
+            PRENEI as double,
+            PRELIQ as double,
+            T as double,
+            FF as double,
+            Q as double,
+            DLI as double,
+            SSI as double,
+            HU as double,
+            EVAP as double,
+            ETP as double,
+            PE as double,
+            SWI as double,
+            DRAINC as double,
+            RUNC as double,
+            RESR_NEIGE as double,
+            RESR_NEIGE6 as double,
+            HTEURNEIGE as double,
+            HTEURNEIGE6 as double,
+            HTEURNEIGEX as double,
+            SNOW_FRAC as double,
+            ECOULEMENT as double,
+            WG_RACINE as double,
+            WGI_RACINE as double,
+            TINF_H as double,
+            TSUP_H as double
+        ),
+    allowSchemaDrift: true,
+    validateSchema: false,
+    ignoreNoFilesFound: false,
+    format: 'parquet'
+    ) ~> sourceparquetdataweather
+    sourceparquetdataweather select(mapColumn(
+            LAMBX,
+            LAMBY
+        ),
+        skipDuplicateMapInputs: true,
+        skipDuplicateMapOutputs: true) ~> selectparquetfilelocalisation
+    selectparquetfilelocalisation aggregate(groupBy(LAMBX,
+        LAMBY),
+    each(patternMatch(`$$` , true()), $$ = first($$))) ~> distinctrowlocalisation
+
+    distinctrowlocalisation alterRow(upsertIf(true())) ~> alterRow1localisation
+    alterRow1localisation sink(
+        allowSchemaDrift: true,
+        validateSchema: false,
+        input(
+            LAMBX as long,
+            LAMBY as long
+        ),
+    deletable: false,
+    insertable: false,
+    updateable: false,
+    upsertable: true,
+    truncate: false,
+    format: 'table',
+    keys:['LAMBX','LAMBY'],
+    skipDuplicateMapInputs: true,
+    skipDuplicateMapOutputs: true
+    ) ~> postgreLocalisation
   EOT
 }
 
@@ -1037,8 +1161,8 @@ resource "azurerm_data_factory_data_flow" "copy_data_tables_infos" {
   EOT
 }
 
-resource "azurerm_data_factory_data_flow" "copy_data_table_piezo_quotidien" {
-  name            = "copy_data_table_piezo_quotidien"
+resource "azurerm_data_factory_data_flow" "copy_data_table_piezoquotidien" {
+  name            = "copy_data_table_piezoquotidien"
   data_factory_id = azurerm_data_factory.data_factory.id
 
   source {
@@ -1053,7 +1177,7 @@ resource "azurerm_data_factory_data_flow" "copy_data_table_piezo_quotidien" {
     name = "toNappe"
 
     dataset {
-      name = azurerm_data_factory_custom_dataset.table_piezo_quotidien.name
+      name = azurerm_data_factory_custom_dataset.table_piezouotidien.name
     }
   }
   script = <<EOT
@@ -1125,9 +1249,40 @@ resource "azurerm_data_factory_pipeline" "pipeline_copy_data_in_db" {
   activities_json = <<JSON
    [
         {
-            "name": "Data flow copy data weather",
+            "name": "Data flow copy data location",
             "type": "ExecuteDataFlow",
             "dependsOn": [],
+            "policy": {
+                "timeout": "0.12:00:00",
+                "retry": 0,
+                "retryIntervalInSeconds": 30,
+                "secureOutput": false,
+                "secureInput": false
+            },
+            "userProperties": [],
+            "typeProperties": {
+                "dataflow": {
+                    "referenceName": "${azurerm_data_factory_data_flow.copy_data_localisation.name}",
+                    "type": "DataFlowReference"
+                },
+                "compute": {
+                    "coreCount": 8,
+                    "computeType": "General"
+                },
+                "traceLevel": "Fine"
+            }
+        },
+        {
+            "name": "Data flow copy data weather",
+            "type": "ExecuteDataFlow",
+            "dependsOn": [
+                {
+                    "activity": "Data flow copy data location",
+                    "dependencyConditions": [
+                        "Succeeded"
+                    ]
+                }
+            ],
             "policy": {
                 "timeout": "0.12:00:00",
                 "retry": 0,
@@ -1200,7 +1355,7 @@ resource "azurerm_data_factory_pipeline" "pipeline_copy_data_in_db" {
             "userProperties": [],
             "typeProperties": {
                 "dataflow": {
-                    "referenceName": "${azurerm_data_factory_data_flow.copy_data_table_piezo_quotidien.name}",
+                    "referenceName": "${azurerm_data_factory_data_flow.copy_data_table_piezoquotidien.name}",
                     "type": "DataFlowReference"
                 },
                 "compute": {
@@ -1224,9 +1379,9 @@ resource "azurerm_data_factory_trigger_schedule" "trigger_schedule" {
   pipeline {
     name = azurerm_data_factory_pipeline.pipeline_get_csv.name
   }
-  pipeline {
-    name = azurerm_data_factory_pipeline.pipeline_get_db.name
-  }
+#   pipeline {
+#     name = azurerm_data_factory_pipeline.pipeline_get_db.name
+#   }
   frequency  = "Month"
   interval   = 1
   start_time = "2025-04-08T10:00:00Z"
