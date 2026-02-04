@@ -13,7 +13,7 @@ resource "azurerm_data_factory_linked_service_sql_server" "ct_database" {
 resource "azurerm_data_factory_linked_service_azure_function" "csv_function" {
   name            = "Csv_function"
   data_factory_id = azurerm_data_factory.data_factory.id
-  url             = "https://get-weather-data-projet-sd.azurewebsites.net"
+  url             = "https://azs-get-weather-data-projet-sd.azurewebsites.net"
   key             = module.azure_functions_weather_data.function_key
 }
 
@@ -21,7 +21,7 @@ resource "azurerm_data_factory_linked_service_azure_function" "api_function" {
   name = "Api_function"
 
   data_factory_id = azurerm_data_factory.data_factory.id
-  url             = "https://get-hubeau-api-data-projet-sd.azurewebsites.net"
+  url             = "https://azs-get-hubeau-api-data-projet-sd.azurewebsites.net"
   key             = module.azure_functions_api.function_key
 }
 
@@ -54,9 +54,7 @@ resource "azurerm_data_factory_linked_service_data_lake_storage_gen2" "datalake_
 resource "azurerm_data_factory_linked_custom_service" "postgres_ls" {
   name            = "AzurePostgreSql"
   data_factory_id = azurerm_data_factory.data_factory.id
-
-  type = "AzurePostgreSql"
-  additional_properties = {version: "2.0"}
+  type            = "AzurePostgreSql"
 
   type_properties_json = <<JSON
 {
@@ -65,13 +63,11 @@ resource "azurerm_data_factory_linked_custom_service" "postgres_ls" {
 JSON
 }
 
-
 resource "azurerm_data_factory_linked_custom_service" "postgres_ls_city" {
   name            = "AzurePostgreSql_get_city_data"
   data_factory_id = azurerm_data_factory.data_factory.id
 
   type = "AzurePostgreSql"
-  additional_properties = {version: "2.0"}
 
   type_properties_json = <<JSON
 {
@@ -81,7 +77,7 @@ JSON
 }
 
 resource "azurerm_data_factory_custom_dataset" "table_meteo_quotidien" {
-  name            = "TableMeteoQuotidien"
+  name            = "Meteo"
   data_factory_id = azurerm_data_factory.data_factory.id
   type            = "AzurePostgreSqlTable"
   folder = "PostgresTables"
@@ -94,7 +90,7 @@ resource "azurerm_data_factory_custom_dataset" "table_meteo_quotidien" {
   type_properties_json = <<JSON
    {
         "schema": "public",
-        "table": "TableMeteoQuotidien"
+        "table": "Meteo"
     }
   JSON
   schema_json          = <<JSON
@@ -279,7 +275,7 @@ resource "azurerm_data_factory_custom_dataset" "table_meteo_quotidien" {
 }
 
 resource "azurerm_data_factory_custom_dataset" "table_piezo_quotidien" {
-  name            = "TablePiezoQuotidien"
+  name            = "Nappe"
   data_factory_id = azurerm_data_factory.data_factory.id
   type            = "AzurePostgreSqlTable"
   folder = "PostgresTables"
@@ -292,7 +288,7 @@ resource "azurerm_data_factory_custom_dataset" "table_piezo_quotidien" {
   type_properties_json = <<JSON
    {
         "schema": "public",
-        "table": "TablePiezoQuotidien"
+        "table": "Nappe"
     }
   JSON
   schema_json          = <<JSON
@@ -363,7 +359,7 @@ resource "azurerm_data_factory_custom_dataset" "table_piezo_quotidien" {
 }
 
 resource "azurerm_data_factory_custom_dataset" "table_piezo_info" {
-  name            = "TablePiezoInfo"
+  name            = "Info_nappe"
   data_factory_id = azurerm_data_factory.data_factory.id
   type            = "AzurePostgreSqlTable"
   folder = "PostgresTables"
@@ -376,7 +372,7 @@ resource "azurerm_data_factory_custom_dataset" "table_piezo_info" {
   type_properties_json = <<JSON
    {
         "schema": "public",
-        "table": "TablePiezoInfo"
+        "table": "Info_nappe"
     }
   JSON
   schema_json          = <<JSON
@@ -784,7 +780,7 @@ resource "azurerm_data_factory_data_flow" "copy_data_weather" {
   }
 
   sink {
-    name = "postgreTableMeteoQuotidien"
+    name = "postgreMeteo"
 
     dataset {
       name = azurerm_data_factory_custom_dataset.table_meteo_quotidien.name
@@ -870,7 +866,7 @@ resource "azurerm_data_factory_data_flow" "copy_data_weather" {
     format: 'table',
     skipDuplicateMapInputs: true,
     skipDuplicateMapOutputs: true
-    ) ~> postgreTableMeteoQuotidien
+    ) ~> postgreMeteo
   EOT
 }
 
@@ -887,7 +883,7 @@ resource "azurerm_data_factory_data_flow" "copy_data_tables_infos" {
   }
 
   sink {
-    name = "toTablePiezoInfo"
+    name = "toInfo_nappe"
 
     dataset {
       name = azurerm_data_factory_custom_dataset.table_piezo_info.name
@@ -1037,7 +1033,7 @@ resource "azurerm_data_factory_data_flow" "copy_data_tables_infos" {
         keys:['code_bss'],
         format: 'table',
         skipDuplicateMapInputs: true,
-        skipDuplicateMapOutputs: true) ~> toTablePiezoInfo
+        skipDuplicateMapOutputs: true) ~> toInfo_nappe
   EOT
 }
 
@@ -1054,7 +1050,7 @@ resource "azurerm_data_factory_data_flow" "copy_data_table_piezo_quotidien" {
   }
 
   sink {
-    name = "toTablePiezoQuotidien"
+    name = "toNappe"
 
     dataset {
       name = azurerm_data_factory_custom_dataset.table_piezo_quotidien.name
@@ -1118,7 +1114,7 @@ resource "azurerm_data_factory_data_flow" "copy_data_table_piezo_quotidien" {
         keys:['code_bss','date_mesure'],
         format: 'table',
         skipDuplicateMapInputs: true,
-        skipDuplicateMapOutputs: true) ~> toTablePiezoQuotidien
+        skipDuplicateMapOutputs: true) ~> toNappe
    EOT
 }
 
@@ -1622,6 +1618,61 @@ resource "azurerm_data_factory_pipeline" "pipeline_get_db" {
                         "type": "DatasetReference"
                     }
                 ]
+            }
+        ]
+  JSON
+}
+
+resource "azurerm_data_factory_trigger_schedule" "trigger_schedule_rgpd" {
+  name            = "trigger_schedule_rgpd"
+  data_factory_id = azurerm_data_factory.data_factory.id
+
+  pipeline {
+    name = azurerm_data_factory_pipeline.pipeline_delete_user.name
+  }
+
+  frequency  = "Day"
+  interval   = 1
+  start_time = "2025-04-08T00:00:00Z"
+  time_zone  = "Romance Standard Time"
+
+  schedule {
+    hours   = [0]
+    minutes = [0]
+  }
+}
+
+resource "azurerm_data_factory_pipeline" "pipeline_delete_user" {
+  name            = "pipeline_delete_user"
+  data_factory_id = azurerm_data_factory.data_factory.id
+  folder = "RGPD"
+  activities_json = <<JSON
+  [
+            {
+                "name": "Script delete users",
+                "type": "Script",
+                "dependsOn": [],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "linkedServiceName": {
+                    "referenceName": "${azurerm_data_factory_linked_custom_service.postgres_ls.name}",
+                    "type": "LinkedServiceReference"
+                },
+                "typeProperties": {
+                    "scripts": [
+                        {
+                            "type": "Query",
+                            "text": "DELETE FROM users\nWHERE last_login_at < NOW() - INTERVAL '1 year'\n   OR last_login_at IS NULL;"
+                        }
+                    ],
+                    "scriptBlockExecutionTimeout": "02:00:00"
+                }
             }
         ]
   JSON
