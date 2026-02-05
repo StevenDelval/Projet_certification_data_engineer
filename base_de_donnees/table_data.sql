@@ -40,6 +40,8 @@ CREATE TABLE IF NOT EXISTS "Meteo" (
   FOREIGN KEY ("LAMBX", "LAMBY") REFERENCES "Localisation" ("LAMBX", "LAMBY")
 );
 CREATE INDEX idx_meteo_localisation ON "Meteo"("LAMBX", "LAMBY");
+-- Pour les jointures Meteo par date
+CREATE INDEX idx_meteo_date ON "Meteo"("DATE");
 
 -- Table des points piézométriques
 CREATE TABLE IF NOT EXISTS "Info_nappe" (
@@ -87,6 +89,8 @@ CREATE TABLE IF NOT EXISTS "Nappe" (
   FOREIGN KEY ("code_continuite") REFERENCES "Continuite" ("code_continuite"),
   FOREIGN KEY ("code_producteur") REFERENCES "Producteur" ("code_producteur")
 );
+-- Pour les requêtes avec filtres de date
+CREATE INDEX idx_nappe_date_mesure ON "Nappe"("date_mesure");
 
 CREATE TABLE IF NOT EXISTS users (
   "id" SERIAL PRIMARY KEY,
