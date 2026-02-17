@@ -2,104 +2,99 @@
 erDiagram
     direction LR
 
-Meteo {
-    DATE str pk
-    LAMBX int pk,fk
-    LAMBY int pk,fk
-    PRENEI_Q float
-    PRELIQ_Q float
-    T_Q float
-    FF_Q float
-    Q_Q float
-    DLI_Q float
-    SSI_Q float
-    HU_Q float
-    EVAP_Q float
-    ETP_Q float
-    PE_Q float
-    SWI_Q float
-    DRAINC_Q float
-    RUNC_Q float
-    RESR_NEIGE_Q float
-    RESR_NEIGE6_Q float
-    HTEURNEIGE_Q float
-    HTEURNEIGE6_Q float
-    HTEURNEIGEX_Q float
-    SNOW_FRAC_Q float
-    ECOULEMENT_Q float
-    WG_RACINE_Q float
-    WGI_RACINE_Q float
-    TINF_H_Q float
-    TSUP_H_Q float
-}
-Info_nappe {
-    code_bss str pk
-    LAMBX int pk,fk
-    LAMBY int pk,fk
-    urn_bss str
-}
-
 Localisation {
     LAMBX int pk
     LAMBY int pk
 }
 
-Nappe {
-    code_bss str pk,fk
-    date_mesure str pk
-    code_nature_mesure str fk
-    code_continuite int fk
-    code_producteur int fk 
-    qualification str
-    statut str
-    mode_obtention str
-    profondeur_nappe float
-    niveau_nappe_eau float
+Meteo {
+    DATE date pk
+    LAMBX int pk,fk
+    LAMBY int pk,fk
+    PRENEI real
+    PRELIQ real
+    T real
+    FF real
+    Q real
+    DLI real
+    SSI real
+    HU real
+    EVAP real
+    ETP real
+    PE real
+    SWI real
+    SSWI_10J real
+    DRAINC real
+    RUNC real
+    RESR_NEIGE real
+    RESR_NEIGE6 real
+    HTEURNEIGE real
+    HTEURNEIGE6 real
+    HTEURNEIGEX real
+    SNOW_FRAC real
+    ECOULEMENT real
+    WG_RACINE real
+    WGI_RACINE real
+    TINF_H real
+    TSUP_H real
 }
+
+Info_nappe {
+    code_bss varchar pk
+    urn_bss varchar
+    LAMBX int fk
+    LAMBY int fk
+}
+
 Nature_mesure {
-    code_nature_mesure str pk
-    nom_nature_mesure str
+    code_nature_mesure varchar pk
+    nom_nature_mesure varchar
 }
+
 Continuite {
     code_continuite int pk
-    nom_continuite str
+    nom_continuite varchar
 }
+
 Producteur {
-    code_producteur int pk
-    nom_producteur str
+    code_producteur bigint pk
+    nom_producteur varchar
 }
 
-
-
-
-User {
-    id SERIAL pk
-
-    username str 
-    hashed_password str 
-
-    first_name str
-    last_name str
-    email str
-    address str
-
-    consent_given bool 
-    consent_date timestamp
-    consent_version str
-
-    is_active bool  
-    deleted_at timestamp
-
-    created_at timestamp 
-    last_login_at timestamp
+Nappe {
+    code_bss varchar pk,fk
+    date_mesure date pk
+    code_nature_mesure varchar fk
+    code_continuite int fk
+    code_producteur bigint fk
+    qualification varchar
+    statut varchar
+    mode_obtention varchar
+    profondeur_nappe real
+    niveau_nappe_eau real
 }
 
+Users {
+    id serial pk
+    username varchar
+    hashed_password varchar
+    first_name varchar
+    last_name varchar
+    email varchar
+    address varchar
+    consent_given bool
+    consent_date timestamptz
+    consent_version varchar
+    is_active bool
+    deleted_at timestamptz
+    created_at timestamptz
+    last_login_at timestamptz
+}
 
 Meteo many to 1 Localisation : "localise"
 Localisation 1 to many Info_nappe : "localise"
 Info_nappe 1 to many Nappe : "mesure"
-Nappe many to 1 Nature_mesure : "caractérisée "
+Nappe many to 1 Nature_mesure : "caractérisée"
 Nappe many to 1 Continuite : "associée"
 Nappe many to 1 Producteur : "produit par"
-
 ```
